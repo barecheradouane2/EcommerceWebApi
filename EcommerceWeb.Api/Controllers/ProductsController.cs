@@ -14,10 +14,13 @@ namespace EcommerceWeb.Api.Controllers
     {
         private readonly EcommerceDbContext dbContext;
         private readonly IProductRepository productRepository;
-        public ProductsController(EcommerceDbContext dbContext,IProductRepository productRepository)
+
+        private readonly IProductImageRepository productImageRepository;
+        public ProductsController(EcommerceDbContext dbContext,IProductRepository productRepository, IProductImageRepository productImageRepository)
         {
             this.dbContext = dbContext;
             this.productRepository = productRepository;
+            this.productImageRepository = productImageRepository;
         }
 
         [HttpGet]
@@ -89,7 +92,7 @@ namespace EcommerceWeb.Api.Controllers
 
         [HttpPost]
 
-        public async  Task <IActionResult> CreateAsync([FromBody] AddProductRequestDTO AddProductRequestDTO)
+        public async  Task <IActionResult> CreateAsync([FromForm] ProductUplodadImageDTO AddProductRequestDTO)
         {
           var productDomainModel = new ProductCatalog
           {
@@ -127,12 +130,25 @@ namespace EcommerceWeb.Api.Controllers
 
             };
 
-          //  return CreatedAtAction(nameof(GetByIdAsync), new { id = productDomainModel.ProductID }, productDTO);
+            // set the productImagesModel
+            var imageorder = 0;
+            foreach (var imageFile in AddProductRequestDTO.ImageFile)
+            {
+                var productImagesModel = new ProductImages
+                {
+                    ProductID = productDomainModel.ProductID,
+                    
+                    ImageOrder = imageorder++,
+                    ImageFile = imageFile
+
+                };
+
+                await productImageRepository.CreateAsync(productImagesModel);
+            }
 
 
-            //   return CreatedAtAction(nameof(GetByIdAsync), new { id = productDomainModel.ProductID }, productDTO);
 
-             return Created($"/api/Products/{productDTO.ProductID}", productDTO);
+            return Created($"/api/Products/{productDTO.ProductID}", productDTO);
         }
 
 
@@ -140,15 +156,9 @@ namespace EcommerceWeb.Api.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] UpdateProductRequestDTO updateProductRequestDTO)
+        public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromForm] ProductUplodadImageDTO updateProductRequestDTO)
         {
 
-
-          /*  var product = await productRepository.GetByIdAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }*/
           var product = new ProductCatalog();
 
 
@@ -162,6 +172,8 @@ namespace EcommerceWeb.Api.Controllers
 
 
 
+
+
             product = await productRepository.UpdateAsync(id, product);
 
 
@@ -169,6 +181,41 @@ namespace EcommerceWeb.Api.Controllers
             {
                 return NotFound();
             }
+
+
+            var imageorder = 0;
+            foreach (var imageFile in updateProductRequestDTO.ImageFile)
+            {
+                var productImagesModel = new ProductImages
+                {
+                    ProductID = product.ProductID,
+
+                    ImageOrder = imageorder++,
+                    ImageFile = imageFile
+
+                };
+
+                await productImageRepository.UpdateAsync(product.ProductID, productImagesModel);
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             var productDTO = new ProductDTO
             {
@@ -222,9 +269,42 @@ namespace EcommerceWeb.Api.Controllers
             };
 
 
-           
+            for(int i = 0; i < 4; i++)
+            {
+                await productImageRepository.DeleteAsync(product.ProductID,i);
+            }
+
+
+
 
             return Ok(productDTO);
+        }
+
+        [HttpGet("{id}/images")]
+
+        public async Task<IActionResult> GetProductImagesAsync([FromRoute] int id)
+        {
+            var productImages = await productImageRepository.GetByIdAsync(id);
+
+            if (productImages == null)
+            {
+                return NotFound();
+            }
+
+            var productImagesDTO = new List<ProductImagesDTO>();
+
+            foreach (var productImage in productImages)
+            {
+                productImagesDTO.Add(new ProductImagesDTO
+                {
+                    ProductID = productImage.ProductID,
+                    ImageID = productImage.ImageID,
+                    ImageOrder = productImage.ImageOrder,
+                    ImageUrl = productImage.ImageUrl
+                });
+            }
+
+            return Ok(productImagesDTO);
         }
 
 

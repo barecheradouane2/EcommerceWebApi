@@ -2,28 +2,35 @@
 using EcommerceWeb.Api.Models.Domain;
 using EcommerceWeb.Api.Models.DTO;
 using EcommerceWeb.Api.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace EcommerceWeb.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+   
     public class CategoryController : ControllerBase
     {
 
         private readonly EcommerceDbContext dbContext;
         private readonly ICategoryRepository categoryRepository;
-        public CategoryController(EcommerceDbContext dbContext, ICategoryRepository categoryRepository)
+        private readonly ILogger<CategoryController> logger;
+        public CategoryController(EcommerceDbContext dbContext, ICategoryRepository categoryRepository,ILogger <CategoryController> logger)
         {
             this.dbContext = dbContext;
             this.categoryRepository = categoryRepository;
+            this.logger = logger;
         }
 
         [HttpGet]
+     //   [Authorize(Roles = "Reader,Writer")]
 
         public async Task<IActionResult> GetAllAsync()
         {
+            logger.LogInformation("Get All Categories");
 
             var categories = await categoryRepository.GetAllAsync();
 
@@ -40,13 +47,15 @@ namespace EcommerceWeb.Api.Controllers
                 });
             }
 
+            logger.LogInformation($"Returning {categories.Count} categories {JsonSerializer.Serialize(categoryDTO)}");
+
 
             return Ok(categories);
 
         }
 
         [HttpGet("{id}")]
-
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetByIdAsync([FromRoute] int id)
         {
             var category = await categoryRepository.GetByIdAsync(id);
@@ -68,6 +77,7 @@ namespace EcommerceWeb.Api.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> CreateAsync([FromBody] AddCategoryRequestDTO AddCategoryRequestDTO)
         {
 
@@ -109,6 +119,7 @@ namespace EcommerceWeb.Api.Controllers
 
         [HttpPut]
         [Route("{id}")]
+        [Authorize(Roles = "Writer")]
 
         public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] UpdateCategoryDTO UpdateCategoryDTO)
         {
@@ -142,6 +153,7 @@ namespace EcommerceWeb.Api.Controllers
 
         [HttpDelete]
         [Route("{id}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
            var category= await categoryRepository.DeleteAsync(id);
