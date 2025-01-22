@@ -26,10 +26,23 @@ namespace EcommerceWeb.Api.Data
 
             var categories = new List <Category>() { new Category { CategoryID = 1, CategoryName = "Electronics" , Description =" Best Quality " }, new Category { CategoryID = 2, CategoryName = "Clothing" , Description =" All Size "} };
 
+            modelBuilder.Entity<OrderItems>()
+                .HasOne(oi => oi.ProductCatalog)
+                .WithMany(pc => pc.OrderItems) // Only if `ProductCatalog` has `ICollection<OrderItems>`.
+                .HasForeignKey(oi => oi.ProductID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
 
             modelBuilder.Entity<Category>().HasData(categories);
 
-
+            // Configure relationships between Orders and OrderItems
+            modelBuilder.Entity<Orders>()
+         .HasMany(o => o.OrderItems)
+         .WithOne()
+         .HasForeignKey(oi => oi.OrderID)
+         .OnDelete(DeleteBehavior.Cascade)
+         ;
 
 
 

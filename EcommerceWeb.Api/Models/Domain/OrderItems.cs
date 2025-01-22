@@ -12,7 +12,7 @@ namespace EcommerceWeb.Api.Models.Domain
         [ForeignKey("OrderID")]
         public int OrderID { get; set; }
 
-        public int ProductID { get; set; }
+     
 
         public int Quantity { get; set; }
 
@@ -23,6 +23,8 @@ namespace EcommerceWeb.Api.Models.Domain
         // Navigation property
 
         [ForeignKey("ProductID")]
+
+        public int ProductID { get; set; }
         public ProductCatalog ProductCatalog { get; set; }
     }
 }

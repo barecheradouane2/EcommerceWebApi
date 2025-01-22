@@ -34,5 +34,9 @@ namespace EcommerceWeb.Api.Models.Domain
         public ShippingInfo ShippingInfo { get; set; }
         [ForeignKey("DiscountCodeID")]
         public DiscountCodes DiscountCodes { get; set; }
+
+
+        public ICollection<OrderItems> OrderItems { get; set; } = new List<OrderItems>();
+
     }
 }

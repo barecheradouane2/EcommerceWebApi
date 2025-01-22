@@ -17,6 +17,26 @@ namespace EcommerceWeb.Api.Repositories
 
         public async Task<Orders> CreateAsync(Orders Order)
         {
+            decimal totalamount = 0;
+
+
+              foreach (var item in Order.OrderItems)
+               {
+                   var product = dbContext.ProductCatalog.FirstOrDefault(p => p.ProductID == item.ProductID);
+                   if (product == null)
+                   {
+                       return null;
+                   }
+                   item.Price = product.Price;
+                   item.TotalItemsPrice = item.Price * item.Quantity;
+
+                totalamount += item.Quantity;
+            }
+
+
+            Order.TotalAmount=totalamount;
+
+
             dbContext.Orders.Add(Order);
           await  dbContext.SaveChangesAsync();
             return Order;
@@ -27,14 +47,43 @@ namespace EcommerceWeb.Api.Repositories
 
         public async Task<Orders?> DeleteAsync(int ID)
         {
-            throw new NotImplementedException();
+            var order = await dbContext.Orders
+    .Include(o => o.OrderItems)
+        .ThenInclude(oi => oi.ProductCatalog)
+    .FirstOrDefaultAsync(o => o.OrderID == ID);
+
+
+          //  var order = await dbContext.Orders.Include(o => o.OrderItems).FirstOrDefaultAsync(o => o.OrderID == ID);
+            if (order != null)
+            {
+                dbContext.Orders.Remove(order);
+                await dbContext.SaveChangesAsync();
+                return order;
+            }
+            return null;
+
         }
 
 
         public async Task<List<Orders>> GetAllAsync([FromQuery] string? filterOn = null, [FromQuery] string? filterQuery = null, [FromQuery] string? sortBy = null, [FromQuery] bool? isAscending = true, [FromQuery] int pageNumber = 1, [FromQuery] int pagesize = 1000)
         {
 
-            var orders= await dbContext.Orders.ToListAsync();
+            var orders = await dbContext.Orders.Include(o => o.OrderItems)
+    .ThenInclude(oi => oi.ProductCatalog) // Include related products
+    .ToListAsync();
+
+
+
+
+
+
+
+
+
+
+
+
+            //  var orders = await dbContext.Orders.ToListAsync();
 
             if (string.IsNullOrEmpty(filterOn) == false && string.IsNullOrEmpty(filterQuery) == false)
             {
@@ -92,13 +141,98 @@ namespace EcommerceWeb.Api.Repositories
         public async Task<Orders?> GetByIdAsync(int id)
         {
 
-            return await dbContext.Orders.FindAsync(id);
+
+            return await dbContext.Orders
+         .Include(o => o.OrderItems).ThenInclude(oi => oi.ProductCatalog).FirstOrDefaultAsync(o => o.OrderID == id);
+
         }
 
         public async Task<Orders?> UpdateAsync(int ID, Orders Order)
         {
-            throw new NotImplementedException();
+            var order = await dbContext.Orders
+         .Include(o => o.OrderItems).ThenInclude(oi => oi.ProductCatalog).FirstOrDefaultAsync(o => o.OrderID == ID);
+
+         
+
+
+            if (order != null)
+            {
+
+                order.OrderDate = Order.OrderDate;
+                order.OrderStatus = Order.OrderStatus;
+                order.FullName = Order.FullName;
+                order.TelephoneNumber = Order.TelephoneNumber;
+                order.Wilaya = Order.Wilaya;
+                order.Commune = Order.Commune;
+                order.OrderAddress = Order.OrderAddress;
+                order.DiscountCodeID = Order.DiscountCodeID;
+                order.ShippingID = Order.ShippingID;
+                order.ShippingStatus = Order.ShippingStatus;
+
+                
+
+                foreach (var item in Order.OrderItems)
+                {
+                    var product = dbContext.ProductCatalog.FirstOrDefault(p => p.ProductID == item.ProductID);
+                    if (product == null)
+                    {
+                        return null;
+                    }
+                    item.Price = product.Price;
+                    item.TotalItemsPrice = item.Price * item.Quantity;
+
+                    item.ProductCatalog= product;
+                }
+
+                order.OrderItems = Order.OrderItems;
+
+
+
+
+
+
+                // Mark the order entity as updated
+                // dbContext.Orders.Update(order);
+
+
+
+                // Save changes
+                await dbContext.SaveChangesAsync();
+
+                return order;
+            }
+
+            return null;
         }
+
+
+
+        /*
+         
+         {
+  "orderItems": [
+    {
+      "productID":1,
+      "quantity": 3
+    }
+  ],
+  "orderDate": "2025-01-19T14:13:23.254Z",
+  "totalAmount": 0,
+  "orderStatus": 1,
+  "fullName": "radouane",
+  "telephoneNumber": "0657113994",
+  "orderAddress": "soumame",
+  "wilaya": "mila",
+  "commune": "ferdjioua",
+  "discountCodeID": 1,
+  "shippingID": 1,
+  "shippingStatus": 0
+}
+         
+         
+   
+         
+         */
 
 
 

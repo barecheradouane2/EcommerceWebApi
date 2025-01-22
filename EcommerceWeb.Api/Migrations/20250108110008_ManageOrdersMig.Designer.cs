@@ -4,6 +4,7 @@ using EcommerceWeb.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcommerceWeb.Api.Migrations
 {
     [DbContext(typeof(EcommerceDbContext))]
-    partial class EcommerceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250108110008_ManageOrdersMig")]
+    partial class ManageOrdersMig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,6 +119,9 @@ namespace EcommerceWeb.Api.Migrations
                     b.Property<int>("OrderID")
                         .HasColumnType("int");
 
+                    b.Property<int?>("OrdersOrderID")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
@@ -130,7 +136,7 @@ namespace EcommerceWeb.Api.Migrations
 
                     b.HasKey("OrderItemsID");
 
-                    b.HasIndex("OrderID");
+                    b.HasIndex("OrdersOrderID");
 
                     b.HasIndex("ProductID");
 
@@ -317,9 +323,7 @@ namespace EcommerceWeb.Api.Migrations
                 {
                     b.HasOne("EcommerceWeb.Api.Models.Domain.Orders", null)
                         .WithMany("OrderItems")
-                        .HasForeignKey("OrderID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("OrdersOrderID");
 
                     b.HasOne("EcommerceWeb.Api.Models.Domain.ProductCatalog", "ProductCatalog")
                         .WithMany()

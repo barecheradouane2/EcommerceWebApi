@@ -27,6 +27,8 @@ namespace EcommerceWeb.Api.Models.Domain
 
         public Category Category { get; set; }
 
+        public ICollection<OrderItems> OrderItems { get; set; } = new List<OrderItems>();
+
 
 
     }
