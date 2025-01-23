@@ -1,5 +1,6 @@
 ﻿using EcommerceWeb.Api.Data;
 using EcommerceWeb.Api.Models.Domain;
+using EcommerceWeb.Api.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,29 +18,82 @@ namespace EcommerceWeb.Api.Repositories
 
         public async Task<Orders> CreateAsync(Orders Order)
         {
-            decimal totalamount = 0;
+            decimal TotalPrice = 0;
 
+            var shippininfo = dbContext.ShippingInfo.FirstOrDefault(s => s.ShippingID == Order.ShippingID);
 
-              foreach (var item in Order.OrderItems)
-               {
-                   var product = dbContext.ProductCatalog.FirstOrDefault(p => p.ProductID == item.ProductID);
-                   if (product == null)
-                   {
-                       return null;
-                   }
-                   item.Price = product.Price;
-                   item.TotalItemsPrice = item.Price * item.Quantity;
+            foreach (var item in Order.OrderItems)
+            {
+                var product = dbContext.ProductCatalog.FirstOrDefault(p => p.ProductID == item.ProductID);
+                if (product == null)
+                {
+                    return null;
+                }
+                item.Price = product.Price;
+                item.TotalItemsPrice = item.Price * item.Quantity;
 
-                totalamount += item.Quantity;
+                TotalPrice += item.TotalItemsPrice;
             }
 
 
-            Order.TotalAmount=totalamount;
+            if (Order.ShippingStatus == 0)
+            {
+                TotalPrice += shippininfo.HomeDeliveryPrice;
+
+            }
+            else
+            {
+                TotalPrice += shippininfo.OfficeDeliveryPrice;
+            }
+            Order.TotalPrice = TotalPrice;
+
 
 
             dbContext.Orders.Add(Order);
-          await  dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
+
             return Order;
+
+
+            // false flase 
+
+
+
+
+        //    var orderdetails  = await dbContext.Orders
+        //        .Include(P => P.ShippingInfo).Include(o => o.OrderItems).ThenInclude(oi => oi.ProductCatalog).FirstOrDefaultAsync(o => o.OrderID == Order.OrderID);
+
+
+        //    orderdetails.TotalPrice = orderdetails.OrderItems.Sum(oi => oi.TotalItemsPrice);
+
+        //    if (orderdetails.ShippingStatus == 0)
+        //    {
+        //        orderdetails.TotalPrice += orderdetails.ShippingInfo.HomeDeliveryPrice;
+        //    }
+        //    else
+        //    {
+        //        orderdetails.TotalPrice += orderdetails.ShippingInfo.OfficeDeliveryPrice;
+
+
+        //    }
+
+        //orderdetails.OrderItems = orderdetails.OrderItems.Select(oi => new OrderItems
+        //{
+        //    OrderItemsID = oi.OrderItemsID,
+        //    OrderID = oi.OrderID,
+        //    ProductID = oi.ProductID,
+           
+        //    Quantity = oi.Quantity,
+        //    ProductCatalog = oi.ProductCatalog,
+        //    TotalItemsPrice = oi.ProductCatalog.Price * oi.Quantity,
+        //    Price = oi.ProductCatalog.Price
+        //}).ToList();
+
+
+        //    dbContext.Orders.Add(orderdetails);
+        //    await dbContext.SaveChangesAsync();
+
+        //    return orderdetails;
 
 
 
@@ -69,7 +123,7 @@ namespace EcommerceWeb.Api.Repositories
         {
 
             var orders = await dbContext.Orders.Include(o => o.OrderItems)
-    .ThenInclude(oi => oi.ProductCatalog) // Include related products
+    .ThenInclude(oi => oi.ProductCatalog).Include(P => P.ShippingInfo) // Include related products
     .ToListAsync();
 
 
@@ -116,11 +170,11 @@ namespace EcommerceWeb.Api.Repositories
                 {
                     if (isAscending == true)
                     {
-                        orders = orders.OrderBy(x => x.TotalAmount).ToList();
+             //           orders = orders.OrderBy(x => x.TotalAmount).ToList();
                     }
                     else
                     {
-                        orders = orders.OrderByDescending(x => x.TotalAmount).ToList();
+             //           orders = orders.OrderByDescending(x => x.TotalAmount).ToList();
                     }
                 }
 
@@ -143,13 +197,14 @@ namespace EcommerceWeb.Api.Repositories
 
 
             return await dbContext.Orders
-         .Include(o => o.OrderItems).ThenInclude(oi => oi.ProductCatalog).FirstOrDefaultAsync(o => o.OrderID == id);
+                .Include(P => P.ShippingInfo).Include(o => o.OrderItems).ThenInclude(oi => oi.ProductCatalog).FirstOrDefaultAsync(o => o.OrderID == id);
+
 
         }
 
         public async Task<Orders?> UpdateAsync(int ID, Orders Order)
         {
-            var order = await dbContext.Orders
+            var order = await dbContext.Orders.Include(o=>o.ShippingInfo)
          .Include(o => o.OrderItems).ThenInclude(oi => oi.ProductCatalog).FirstOrDefaultAsync(o => o.OrderID == ID);
 
          
@@ -169,7 +224,7 @@ namespace EcommerceWeb.Api.Repositories
                 order.ShippingID = Order.ShippingID;
                 order.ShippingStatus = Order.ShippingStatus;
 
-                
+                decimal TotalPrice = 0;
 
                 foreach (var item in Order.OrderItems)
                 {
@@ -180,9 +235,19 @@ namespace EcommerceWeb.Api.Repositories
                     }
                     item.Price = product.Price;
                     item.TotalItemsPrice = item.Price * item.Quantity;
+                    TotalPrice += item.TotalItemsPrice;
 
                     item.ProductCatalog= product;
                 }
+                if (order.ShippingStatus==0)
+                {
+                    TotalPrice += order.ShippingInfo.HomeDeliveryPrice;
+                }
+                else
+                {
+                    TotalPrice += order.ShippingInfo.OfficeDeliveryPrice;
+                }
+                order.TotalPrice = TotalPrice;  
 
                 order.OrderItems = Order.OrderItems;
 

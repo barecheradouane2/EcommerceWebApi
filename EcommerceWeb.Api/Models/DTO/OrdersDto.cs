@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EcommerceWeb.Api.Models.Domain;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization; // For JsonIgnore
 
@@ -18,7 +19,13 @@ namespace EcommerceWeb.Api.Models.DTO
                 return OrderDate.ToString("yyyy/MM/dd");
             }
         }
-        public decimal TotalAmount { get; set; }
+        public decimal TotalPrice
+        {
+            get
+            {
+                return OrderItems?.Sum(oi => oi.TotalItemsPrice) + ShippingPrice ?? 0;
+            }
+        }
 
         public string OrderStatusDescription
         {
@@ -48,6 +55,21 @@ namespace EcommerceWeb.Api.Models.DTO
 
         [JsonIgnore]
         public int ShippingID { get; set; }
+
+        public ShippingInfoDTO ShippingInfo { get; set; }
+
+        public  decimal ShippingPrice
+        {
+            get
+            {
+                return ShippingStatus switch
+                {
+                    0 => ShippingInfo.HomeDeliveryPrice,
+                    1 => ShippingInfo.OfficeDeliveryPrice,
+                    // Default value for unexpected statuses.
+                };
+            }
+        }
 
         [JsonIgnore]
         public int ShippingStatus { get; set; }

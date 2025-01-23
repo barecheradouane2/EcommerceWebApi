@@ -4,6 +4,7 @@ using EcommerceWeb.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcommerceWeb.Api.Migrations
 {
     [DbContext(typeof(EcommerceDbContext))]
-    partial class EcommerceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250122145625_totalAmount to totalPrice")]
+    partial class totalAmounttototalPrice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -140,10 +143,7 @@ namespace EcommerceWeb.Api.Migrations
             modelBuilder.Entity("EcommerceWeb.Api.Models.Domain.Orders", b =>
                 {
                     b.Property<int>("OrderID")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderID"));
 
                     b.Property<string>("Commune")
                         .IsRequired()
@@ -186,8 +186,6 @@ namespace EcommerceWeb.Api.Migrations
                     b.HasKey("OrderID");
 
                     b.HasIndex("DiscountCodeID");
-
-                    b.HasIndex("ShippingID");
 
                     b.ToTable("Orders");
                 });
@@ -339,8 +337,8 @@ namespace EcommerceWeb.Api.Migrations
                         .IsRequired();
 
                     b.HasOne("EcommerceWeb.Api.Models.Domain.ShippingInfo", "ShippingInfo")
-                        .WithMany()
-                        .HasForeignKey("ShippingID")
+                        .WithMany("Orders")
+                        .HasForeignKey("OrderID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -379,6 +377,11 @@ namespace EcommerceWeb.Api.Migrations
             modelBuilder.Entity("EcommerceWeb.Api.Models.Domain.ProductCatalog", b =>
                 {
                     b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("EcommerceWeb.Api.Models.Domain.ShippingInfo", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

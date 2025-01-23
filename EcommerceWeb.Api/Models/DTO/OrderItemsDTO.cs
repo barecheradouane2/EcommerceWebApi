@@ -17,20 +17,22 @@ namespace EcommerceWeb.Api.Models.DTO
 
         public string ProductName { get; set; }
 
-        //  public string ProductName { get; set; }
-
         public int Quantity { get; set; }
 
-        public decimal Price { get; set; }
-
-        public decimal TotalItemsPrice { get; set; }
-
+        // Navigation property to ProductCatalog to access the price
         [JsonIgnore]
-        [ForeignKey("ProductID")]
         public ProductCatalog ProductCatalog { get; set; }
 
+        // Calculated property for TotalItemsPrice based on the Price from ProductCatalog
+        public decimal TotalItemsPrice
+        {
+            get;set;
+        }
 
-
-
+        // This would now return the price of the product from ProductCatalog
+        public decimal Price
+        {
+            get;set;
+        }
     }
 }

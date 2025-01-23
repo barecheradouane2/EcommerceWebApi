@@ -45,6 +45,13 @@ namespace EcommerceWeb.Api.Data
          ;
 
 
+            modelBuilder.Entity<Orders>()
+      .HasOne(o => o.ShippingInfo)
+      .WithMany()  // Assuming no navigation property on ShippingInfo side
+      .HasForeignKey(o => o.ShippingID)
+      .OnDelete(DeleteBehavior.Restrict);
+
+
 
 
 

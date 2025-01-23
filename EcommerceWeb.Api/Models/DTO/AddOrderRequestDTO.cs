@@ -13,7 +13,7 @@ namespace EcommerceWeb.Api.Models.DTO
 
         public DateTime OrderDate { get; set; }=DateTime.Now;
 
-        public decimal TotalAmount { get; set; } = 0;
+        public decimal TotalPrice { get; set; } = 0;
 
         public int OrderStatus { get; set; } = 0;
 

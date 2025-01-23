@@ -102,7 +102,7 @@ namespace EcommerceWeb.Api.Controllers
             {
                 OrderID = order.OrderID,
                 OrderDate = order.OrderDate,
-                TotalAmount = order.TotalAmount,
+              //  TotalPrice = order.TotalPrice,
                 OrderStatus = order.OrderStatus,
                 FullName = order.FullName,
                 TelephoneNumber = order.TelephoneNumber,
@@ -112,6 +112,17 @@ namespace EcommerceWeb.Api.Controllers
                 DiscountCodeID = order.DiscountCodeID,
                 ShippingID = order.ShippingID,
                 ShippingStatus = order.ShippingStatus,
+              ShippingInfo =  new ShippingInfoDTO
+              {
+                  ShippingID = order.ShippingInfo.ShippingID,
+                  WilayaFrom = order.ShippingInfo.WilayaFrom,
+                  WilayaTo = order.ShippingInfo.WilayaTo,
+                  
+                  HomeDeliveryPrice = order.ShippingInfo.HomeDeliveryPrice,
+                  OfficeDeliveryPrice = order.ShippingInfo.OfficeDeliveryPrice
+
+
+              },
                 OrderItems = order.OrderItems.Select(item => new OrderItemsDTO
                 {
                     OrderItemsID = item.OrderItemsID,
@@ -142,7 +153,7 @@ namespace EcommerceWeb.Api.Controllers
             {
                 OrderID = order.OrderID,
                 OrderDate = order.OrderDate,
-                TotalAmount = order.TotalAmount,
+                    //TotalPrice = order.TotalPrice ,
                 OrderStatus = order.OrderStatus,
                 FullName = order.FullName,
                 TelephoneNumber = order.TelephoneNumber,
@@ -152,6 +163,18 @@ namespace EcommerceWeb.Api.Controllers
                 DiscountCodeID = order.DiscountCodeID,
                 ShippingID = order.ShippingID,
                 ShippingStatus = order.ShippingStatus,
+
+                ShippingInfo = new ShippingInfoDTO
+                {
+                    ShippingID = order.ShippingInfo.ShippingID,
+                    WilayaFrom = order.ShippingInfo.WilayaFrom,
+                    WilayaTo = order.ShippingInfo.WilayaTo,
+
+                    HomeDeliveryPrice = order.ShippingInfo.HomeDeliveryPrice,
+                    OfficeDeliveryPrice = order.ShippingInfo.OfficeDeliveryPrice
+
+
+                },
                 OrderItems = order.OrderItems.Select(oi => new OrderItemsDTO
                 {
                     OrderItemsID = oi.OrderItemsID,
@@ -176,7 +199,7 @@ namespace EcommerceWeb.Api.Controllers
             var OrderDomainModel = new Orders
             {
                 OrderDate = addOrderRequestDTO.OrderDate,
-                TotalAmount = addOrderRequestDTO.TotalAmount,
+                TotalPrice = addOrderRequestDTO.TotalPrice,
                 OrderStatus = addOrderRequestDTO.OrderStatus,
                
                 FullName = addOrderRequestDTO.FullName,
@@ -188,6 +211,7 @@ namespace EcommerceWeb.Api.Controllers
                 DiscountCodeID = addOrderRequestDTO.DiscountCodeID,
                 ShippingID = addOrderRequestDTO.ShippingID,
                 ShippingStatus = addOrderRequestDTO.ShippingStatus,
+
 
                 OrderItems = addOrderRequestDTO.OrderItems.Select(item => new OrderItems
                 {
@@ -208,8 +232,8 @@ namespace EcommerceWeb.Api.Controllers
 
                   OrderID = newOrder.OrderID,
                   OrderDate = newOrder.OrderDate,
-                  TotalAmount = newOrder.TotalAmount,
-                  OrderStatus = newOrder.OrderStatus,
+                 //TotalPrice = newOrder.TotalPrice,
+                OrderStatus = newOrder.OrderStatus,
                   FullName = newOrder.FullName,
                   TelephoneNumber = newOrder.TelephoneNumber,
                   OrderAddress = newOrder.OrderAddress,
@@ -218,12 +242,23 @@ namespace EcommerceWeb.Api.Controllers
                   DiscountCodeID = newOrder.DiscountCodeID,
                   ShippingID = newOrder.ShippingID,
                   ShippingStatus = newOrder.ShippingStatus,
+                  ShippingInfo = new ShippingInfoDTO
+                  {
+                      ShippingID = newOrder.ShippingInfo.ShippingID,
+                      WilayaFrom = newOrder.ShippingInfo.WilayaFrom,
+                      WilayaTo = newOrder.ShippingInfo.WilayaTo,
 
-                   OrderItems = newOrder.OrderItems.Select(x => new OrderItemsDTO
+                      HomeDeliveryPrice = newOrder.ShippingInfo.HomeDeliveryPrice,
+                      OfficeDeliveryPrice = newOrder.ShippingInfo.OfficeDeliveryPrice
+
+
+                  },
+                OrderItems = newOrder.OrderItems.Select(x => new OrderItemsDTO
                    {
                        OrderItemsID = x.OrderItemsID,
                        OrderID = x.OrderID,
                        ProductID = x.ProductID,
+                      
                        Quantity = x.Quantity,
                        Price = x.Price,
                        TotalItemsPrice = x.TotalItemsPrice,
@@ -302,7 +337,7 @@ namespace EcommerceWeb.Api.Controllers
             {
                 OrderID = order.OrderID,
                 OrderDate = order.OrderDate,
-                TotalAmount = order.TotalAmount,
+                  //TotalPrice = order.TotalPrice,
                 OrderStatus = order.OrderStatus,
                 FullName = order.FullName,
                 TelephoneNumber = order.TelephoneNumber,
@@ -312,6 +347,17 @@ namespace EcommerceWeb.Api.Controllers
                 DiscountCodeID = order.DiscountCodeID,
                 ShippingID = order.ShippingID,
                 ShippingStatus = order.ShippingStatus,
+                ShippingInfo = new ShippingInfoDTO
+                {
+                    ShippingID = order.ShippingInfo.ShippingID,
+                    WilayaFrom = order.ShippingInfo.WilayaFrom,
+                    WilayaTo = order.ShippingInfo.WilayaTo,
+
+                    HomeDeliveryPrice = order.ShippingInfo.HomeDeliveryPrice,
+                    OfficeDeliveryPrice = order.ShippingInfo.OfficeDeliveryPrice
+
+
+                },
                 OrderItems = order.OrderItems.Select(oi => new OrderItemsDTO
                 {
                     OrderItemsID = oi.OrderItemsID,
@@ -341,7 +387,7 @@ namespace EcommerceWeb.Api.Controllers
             var ordertest= new Orders();
 
             ordertest.OrderDate = addOrderRequestDTO.OrderDate;
-            ordertest.TotalAmount = addOrderRequestDTO.TotalAmount;
+           ordertest.TotalPrice = addOrderRequestDTO.TotalPrice;
             ordertest.OrderStatus = addOrderRequestDTO.OrderStatus;
             ordertest.FullName = addOrderRequestDTO.FullName;
             ordertest.TelephoneNumber = addOrderRequestDTO.TelephoneNumber;
@@ -368,7 +414,7 @@ namespace EcommerceWeb.Api.Controllers
             {
                 OrderID = updatedOrder.OrderID,
                 OrderDate = updatedOrder.OrderDate,
-                TotalAmount = updatedOrder.TotalAmount,
+                //TotalPrice = updatedOrder.TotalPrice,
                 OrderStatus = updatedOrder.OrderStatus,
                 FullName = updatedOrder.FullName,
                 TelephoneNumber = updatedOrder.TelephoneNumber,
@@ -378,6 +424,17 @@ namespace EcommerceWeb.Api.Controllers
                 DiscountCodeID = updatedOrder.DiscountCodeID,
                 ShippingID = updatedOrder.ShippingID,
                 ShippingStatus = updatedOrder.ShippingStatus,
+                ShippingInfo = new ShippingInfoDTO
+                {
+                    ShippingID = order.ShippingInfo.ShippingID,
+                    WilayaFrom = order.ShippingInfo.WilayaFrom,
+                    WilayaTo = order.ShippingInfo.WilayaTo,
+
+                    HomeDeliveryPrice = order.ShippingInfo.HomeDeliveryPrice,
+                    OfficeDeliveryPrice = order.ShippingInfo.OfficeDeliveryPrice
+
+
+                },
                 OrderItems = updatedOrder.OrderItems.Select(oi => new OrderItemsDTO
                 {
                     OrderItemsID = oi.OrderItemsID,
