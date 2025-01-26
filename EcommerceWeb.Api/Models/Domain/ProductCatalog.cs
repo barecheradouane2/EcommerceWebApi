@@ -21,6 +21,7 @@ namespace EcommerceWeb.Api.Models.Domain
 
         public DateTime CreatedAt {  get; set; }
 
+        [ForeignKey("CategoryID")]
         public int CategoryID { get; set; }
 
         // Navigation property
@@ -28,6 +29,9 @@ namespace EcommerceWeb.Api.Models.Domain
         public Category Category { get; set; }
 
         public ICollection<OrderItems> OrderItems { get; set; } = new List<OrderItems>();
+
+
+        public ICollection<ProductImages> ProductImages { get; set; }
 
 
 

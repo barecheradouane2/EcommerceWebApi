@@ -29,7 +29,7 @@ namespace EcommerceWeb.Api.Repositories
                 {
                     return null;
                 }
-                item.Price = product.Price;
+                item.Price = product.Price - product.Discount;
                 item.TotalItemsPrice = item.Price * item.Quantity;
 
                 TotalPrice += item.TotalItemsPrice;
@@ -233,7 +233,7 @@ namespace EcommerceWeb.Api.Repositories
                     {
                         return null;
                     }
-                    item.Price = product.Price;
+                    item.Price = product.Price - product.Discount;
                     item.TotalItemsPrice = item.Price * item.Quantity;
                     TotalPrice += item.TotalItemsPrice;
 

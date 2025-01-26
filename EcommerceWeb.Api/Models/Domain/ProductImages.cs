@@ -14,11 +14,12 @@ namespace EcommerceWeb.Api.Models.Domain
 
         public int ImageOrder { get; set; }
 
+        [ForeignKey("ProductID")]
         public int ProductID { get; set; }
 
         //navigation property
 
-        [ForeignKey("ProductID")]
+      
         public ProductCatalog ProductCatalog { get; set; }
 
     }

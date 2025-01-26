@@ -22,6 +22,9 @@ namespace EcommerceWeb.Api.Models.DTO
         public CategoryDTO Category { get; set; }
 
 
+        public ICollection<ProductImagesDTO> ProductImages { get; set; }
+
+
 
 
 

@@ -52,6 +52,19 @@ namespace EcommerceWeb.Api.Data
       .OnDelete(DeleteBehavior.Restrict);
 
 
+            modelBuilder.Entity<ProductCatalog>()
+       .HasOne(pc => pc.Category) // Each ProductCatalog has one Category
+       .WithMany(c => c.ProductCatalog) // Each Category has many ProductCatalogs
+       .HasForeignKey(pc => pc.CategoryID) // Foreign key property in ProductCatalog
+       .OnDelete(DeleteBehavior.Cascade);
+
+
+            modelBuilder.Entity<ProductImages>()
+       .HasOne(pi => pi.ProductCatalog) // Each ProductImage belongs to one ProductCatalog
+       .WithMany(pc => pc.ProductImages) // Each ProductCatalog has many ProductImages
+       .HasForeignKey(pi => pi.ProductID) // Foreign key property in ProductImage
+       .OnDelete(DeleteBehavior.Cascade);
+
 
 
 

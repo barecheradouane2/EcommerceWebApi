@@ -2,6 +2,7 @@
 using EcommerceWeb.Api.Models.Domain;
 using EcommerceWeb.Api.Models.DTO;
 using EcommerceWeb.Api.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,11 +33,11 @@ namespace EcommerceWeb.Api.Controllers
             // map to dto
 
 
-            var productDTO = new List<ProductDTO>();
+            var productDTOList = new List<ProductDTO>();
 
             foreach (var product in products)
             {
-                productDTO.Add(new ProductDTO
+                productDTOList.Add(new ProductDTO
                 {
                     ProductID = product.ProductID,
                     ProductName = product.ProductName,
@@ -44,7 +45,15 @@ namespace EcommerceWeb.Api.Controllers
                     Price = product.Price,
                     Discount = product.Discount,
                     CreatedDate = product.CreatedAt,
-                    Category=product.Category != null ? new CategoryDTO
+
+                    ProductImages = product.ProductImages.Select(item => new ProductImagesDTO
+                    {
+                        ImageID = item.ImageID,
+                        ImageOrder = item.ImageOrder,
+                        ImageUrl = item.ImageUrl,
+                        ProductID = product.ProductID,
+                    }).ToList(),
+                    Category =product.Category != null ? new CategoryDTO
                     {
                         CategoryID = product.Category.CategoryID,
                         CategoryName = product.Category.CategoryName,
@@ -54,7 +63,7 @@ namespace EcommerceWeb.Api.Controllers
 
                 });
             }
-            return Ok(productDTO);
+            return Ok(productDTOList);
         }
 
         [HttpGet]
@@ -78,6 +87,19 @@ namespace EcommerceWeb.Api.Controllers
                 Price = product.Price,
                 Discount = product.Discount,
                 CreatedDate = product.CreatedAt,
+
+                ProductImages = product.ProductImages.Select(item => new ProductImagesDTO
+                {
+                    ImageID = item.ImageID,
+                    ImageOrder = item.ImageOrder,
+                    ImageUrl = item.ImageUrl,
+                    ProductID = product.ProductID,
+                }).ToList()  ,
+
+
+
+
+
                 Category = product.Category != null ? new CategoryDTO
                 {
                     CategoryID = product.Category.CategoryID,
@@ -92,6 +114,8 @@ namespace EcommerceWeb.Api.Controllers
 
         [HttpPost]
 
+        [Authorize(Roles = "Writer")]
+
         public async  Task <IActionResult> CreateAsync([FromForm] ProductUplodadImageDTO AddProductRequestDTO)
         {
           var productDomainModel = new ProductCatalog
@@ -102,7 +126,18 @@ namespace EcommerceWeb.Api.Controllers
               Discount = AddProductRequestDTO.Discount,
               Stock = AddProductRequestDTO.Stock,
               CreatedAt = DateTime.Now,
-              CategoryID = AddProductRequestDTO.CategoryID
+              CategoryID = AddProductRequestDTO.CategoryID,
+
+              ProductImages = AddProductRequestDTO.ImageFile.Select((item, index) => new ProductImages
+              {
+                  ImageOrder = index,
+                  ImageFile = item,
+                 
+                 
+
+              }).ToList()
+
+
 
 
 
@@ -119,6 +154,15 @@ namespace EcommerceWeb.Api.Controllers
                 Price = productDomainModel.Price,
                 Discount = productDomainModel.Discount,
                 CreatedDate = productDomainModel.CreatedAt,
+                ProductImages = productDomainModel.ProductImages.Select(item => new ProductImagesDTO
+                {
+                    ImageID = item.ImageID,
+                    ImageOrder = item.ImageOrder,
+                    ImageUrl = item.ImageUrl,
+                    ProductID = productDomainModel.ProductID,
+                }).ToList(),
+
+
                 Category = productDomainModel.Category != null ? new CategoryDTO
                 {
                     CategoryID = productDomainModel.Category.CategoryID,
@@ -131,20 +175,20 @@ namespace EcommerceWeb.Api.Controllers
             };
 
             // set the productImagesModel
-            var imageorder = 0;
-            foreach (var imageFile in AddProductRequestDTO.ImageFile)
-            {
-                var productImagesModel = new ProductImages
-                {
-                    ProductID = productDomainModel.ProductID,
+            //var imageorder = 0;
+            //foreach (var imageFile in AddProductRequestDTO.ImageFile)
+            //{
+            //    var productImagesModel = new ProductImages
+            //    {
+            //        ProductID = productDomainModel.ProductID,
                     
-                    ImageOrder = imageorder++,
-                    ImageFile = imageFile
+            //        ImageOrder = imageorder++,
+            //        ImageFile = imageFile
 
-                };
+            //    };
 
-                await productImageRepository.CreateAsync(productImagesModel);
-            }
+            //    await productImageRepository.CreateAsync(productImagesModel);
+            //}
 
 
 
@@ -156,6 +200,8 @@ namespace EcommerceWeb.Api.Controllers
 
         [HttpPut]
         [Route("{id}")]
+
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromForm] ProductUplodadImageDTO updateProductRequestDTO)
         {
 
@@ -172,6 +218,15 @@ namespace EcommerceWeb.Api.Controllers
 
 
 
+            product.ProductImages=updateProductRequestDTO.ImageFile.Select((item, index) => new ProductImages
+            {
+                ImageOrder = index,
+                ImageFile = item,
+
+            }).ToList();
+
+
+
 
 
             product = await productRepository.UpdateAsync(id, product);
@@ -183,38 +238,20 @@ namespace EcommerceWeb.Api.Controllers
             }
 
 
-            var imageorder = 0;
-            foreach (var imageFile in updateProductRequestDTO.ImageFile)
-            {
-                var productImagesModel = new ProductImages
-                {
-                    ProductID = product.ProductID,
+            //var imageorder = 0;
+            //foreach (var imageFile in updateProductRequestDTO.ImageFile)
+            //{
+            //    var productImagesModel = new ProductImages
+            //    {
+            //        ProductID = product.ProductID,
 
-                    ImageOrder = imageorder++,
-                    ImageFile = imageFile
+            //        ImageOrder = imageorder++,
+            //        ImageFile = imageFile
 
-                };
+            //    };
 
-                await productImageRepository.UpdateAsync(product.ProductID, productImagesModel);
-            }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            //    await productImageRepository.UpdateAsync(product.ProductID, productImagesModel);
+            //}
 
 
             var productDTO = new ProductDTO
@@ -225,7 +262,17 @@ namespace EcommerceWeb.Api.Controllers
                 Price = product.Price,
                 Discount = product.Discount,
                 CreatedDate = product.CreatedAt,
-                
+
+                ProductImages = product.ProductImages.Select(item => new ProductImagesDTO
+                {
+                    ImageID = item.ImageID,
+                    ImageOrder = item.ImageOrder,
+                    ImageUrl = item.ImageUrl,
+                    ProductID = product.ProductID,
+                }).ToList(),
+
+
+
                 Category = product.Category != null ? new CategoryDTO
                 {
                     CategoryID = product.Category.CategoryID,
@@ -241,6 +288,8 @@ namespace EcommerceWeb.Api.Controllers
 
         [HttpDelete]
         [Route("{id}")]
+
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
             var product = await productRepository.DeleteAsync(id);
@@ -260,6 +309,17 @@ namespace EcommerceWeb.Api.Controllers
                 Price = product.Price,
                 Discount = product.Discount,
                 CreatedDate = product.CreatedAt,
+
+                ProductImages = product.ProductImages.Select(item => new ProductImagesDTO
+                {
+                    ImageID = item.ImageID,
+                    ImageOrder = item.ImageOrder,
+                    ImageUrl = item.ImageUrl,
+                    ProductID = product.ProductID,
+                }).ToList(),
+
+
+
                 Category = product.Category != null ? new CategoryDTO
                 {
                     CategoryID = product.Category.CategoryID,
@@ -269,43 +329,15 @@ namespace EcommerceWeb.Api.Controllers
             };
 
 
-            for(int i = 0; i < 4; i++)
-            {
-                await productImageRepository.DeleteAsync(product.ProductID,i);
-            }
-
+         
 
 
 
             return Ok(productDTO);
         }
 
-        [HttpGet("{id}/images")]
 
-        public async Task<IActionResult> GetProductImagesAsync([FromRoute] int id)
-        {
-            var productImages = await productImageRepository.GetByIdAsync(id);
 
-            if (productImages == null)
-            {
-                return NotFound();
-            }
-
-            var productImagesDTO = new List<ProductImagesDTO>();
-
-            foreach (var productImage in productImages)
-            {
-                productImagesDTO.Add(new ProductImagesDTO
-                {
-                    ProductID = productImage.ProductID,
-                    ImageID = productImage.ImageID,
-                    ImageOrder = productImage.ImageOrder,
-                    ImageUrl = productImage.ImageUrl
-                });
-            }
-
-            return Ok(productImagesDTO);
-        }
 
 
 

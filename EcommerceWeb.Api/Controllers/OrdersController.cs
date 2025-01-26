@@ -2,6 +2,7 @@
 using EcommerceWeb.Api.Models.Domain;
 using EcommerceWeb.Api.Models.DTO;
 using EcommerceWeb.Api.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -192,6 +193,7 @@ namespace EcommerceWeb.Api.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Writer")]
 
         public async Task<IActionResult> CreateOrderAsync([FromBody] AddOrderRequestDTO addOrderRequestDTO)
         {
@@ -323,6 +325,7 @@ namespace EcommerceWeb.Api.Controllers
 
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Writer")]
 
         public async Task<IActionResult> DeleteOrderAsync(int id)
         {
@@ -374,6 +377,8 @@ namespace EcommerceWeb.Api.Controllers
 
 
         [HttpPut("{id}")]
+
+        [Authorize(Roles = "Reader")]
 
         public async Task<IActionResult> UpdateOrderAsync(int id, [FromBody] UpdateOrderRequestDTO addOrderRequestDTO)
         {

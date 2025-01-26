@@ -1,7 +1,10 @@
 ﻿using EcommerceWeb.Api.Data;
 using EcommerceWeb.Api.Models.Domain;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 namespace EcommerceWeb.Api.Repositories
 {
@@ -9,13 +12,20 @@ namespace EcommerceWeb.Api.Repositories
     {
         private readonly EcommerceDbContext dbContext;
 
-        public SQLProductRepository(EcommerceDbContext dbContext)
+        private readonly IWebHostEnvironment webHostEnvironment;
+        private readonly IHttpContextAccessor httpContextAccessor;
+
+        public SQLProductRepository(EcommerceDbContext dbContext, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor)
         {
             this.dbContext = dbContext;
+            this.webHostEnvironment = webHostEnvironment;
+            this.httpContextAccessor = httpContextAccessor;
         }
         public async Task<List<ProductCatalog>> GetAllAsync([FromQuery] string? filterOn=null, [FromQuery] string? filterQuery = null, [FromQuery] string? sortBy=null, [FromQuery] bool? isAscending=true,  int pageNumber = 1,  int pagesize = 1000)
         {
-            var products = dbContext.ProductCatalog.Include("Category").AsQueryable();
+
+
+            var products = dbContext.ProductCatalog.Include(pc => pc.Category).Include(pc => pc.ProductImages).AsQueryable();
 
             if (string.IsNullOrEmpty(filterOn)==false &&  string.IsNullOrEmpty(filterQuery)==false)
             {
@@ -93,19 +103,43 @@ namespace EcommerceWeb.Api.Repositories
 
         public async Task<ProductCatalog?> GetByIdAsync(int id)
         {
-            return await dbContext.ProductCatalog.Include("Category").FirstOrDefaultAsync(x=>x.ProductID==id);
+
+            return await dbContext.ProductCatalog
+    .Include(pc => pc.Category) 
+    .Include(pc => pc.ProductImages) 
+    .FirstOrDefaultAsync(x => x.ProductID == id); 
+
+          
         }
 
         public async Task<ProductCatalog> CreateAsync(ProductCatalog product)
         {
-          await   dbContext.ProductCatalog.AddAsync(product);
+
+            foreach (var productImage in product.ProductImages)
+            {
+                var localfilepath = Path.Combine(webHostEnvironment.ContentRootPath, "Images", $"{Guid.NewGuid().ToString()}{Path.GetExtension(productImage.ImageFile.FileName)}");
+
+                using var stream = new FileStream(localfilepath, FileMode.Create);
+
+                await productImage.ImageFile.CopyToAsync(stream);
+                productImage.ImageUrl = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}{httpContextAccessor.HttpContext.Request.PathBase}/Images/{productImage.ImageFile}{Path.GetExtension(productImage.ImageFile.FileName)}";
+            }
+
+
+
+
+
+            await   dbContext.ProductCatalog.AddAsync(product);
             await dbContext.SaveChangesAsync();
             return product;
         }
 
         public async Task<ProductCatalog?> UpdateAsync(int ID, ProductCatalog product)
         {
-            var productToUpdate = await dbContext.ProductCatalog.Include("Category").FirstOrDefaultAsync(x=>x.ProductID==ID);
+            var productToUpdate =  await dbContext.ProductCatalog
+    .Include(pc => pc.Category)
+    .Include(pc => pc.ProductImages)
+    .FirstOrDefaultAsync(x => x.ProductID == ID);
             if (productToUpdate != null)
             {
                 productToUpdate.ProductName = product.ProductName;
@@ -116,6 +150,23 @@ namespace EcommerceWeb.Api.Repositories
                 productToUpdate.CreatedAt = product.CreatedAt;
         
                 productToUpdate.CategoryID = product.CategoryID;
+
+
+                foreach (var productImage in product.ProductImages)
+                {
+                    var localfilepath = Path.Combine(webHostEnvironment.ContentRootPath, "Images", $"{Guid.NewGuid().ToString()}{Path.GetExtension(productImage.ImageFile.FileName)}");
+
+                    using var stream = new FileStream(localfilepath, FileMode.Create);
+
+                    await productImage.ImageFile.CopyToAsync(stream);
+                    productImage.ImageUrl = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}{httpContextAccessor.HttpContext.Request.PathBase}/Images/{productImage.ImageFile}{Path.GetExtension(productImage.ImageFile.FileName)}";
+                }
+
+
+                productToUpdate.ProductImages = product.ProductImages;
+
+
+
                 await dbContext.SaveChangesAsync();
                 return productToUpdate;
             }
@@ -124,7 +175,10 @@ namespace EcommerceWeb.Api.Repositories
 
         public async Task<ProductCatalog?> DeleteAsync(int ID)
         {
-            var productToDelete = await dbContext.ProductCatalog.Include("Category").FirstOrDefaultAsync( x=>x.ProductID== ID);
+            var productToDelete  = await dbContext.ProductCatalog.Include(pc => pc.Category).Include(pc => pc.ProductImages).FirstOrDefaultAsync(x => x.ProductID == ID);
+
+
+
             if (productToDelete != null)
             {
                 dbContext.ProductCatalog.Remove(productToDelete);

@@ -23,7 +23,7 @@ namespace EcommerceWeb.Api.Models.DTO
         {
             get
             {
-                return OrderItems?.Sum(oi => oi.TotalItemsPrice) + ShippingPrice ?? 0;
+                return OrderItems?.Sum(oi => oi.TotalItemsPrice)  ?? 0;
             }
         }
 
