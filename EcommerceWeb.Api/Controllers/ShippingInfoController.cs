@@ -1,7 +1,9 @@
-﻿using EcommerceWeb.Api.Data;
+﻿using AutoMapper;
+using EcommerceWeb.Api.Data;
 using EcommerceWeb.Api.Models.Domain;
 using EcommerceWeb.Api.Models.DTO;
 using EcommerceWeb.Api.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
@@ -17,10 +19,13 @@ namespace EcommerceWeb.Api.Controllers
 
         private readonly IShippingInfoRepository ShippingInfoRepository;
 
-        public ShippingInfoController(EcommerceDbContext dbContext , IShippingInfoRepository ShippingInfoRepository)
+        private readonly IMapper mapper;
+
+        public ShippingInfoController(EcommerceDbContext dbContext , IShippingInfoRepository ShippingInfoRepository, IMapper mapper)
         {
             this.dbContext = dbContext;
             this.ShippingInfoRepository = ShippingInfoRepository;
+            this.mapper=mapper;
 
 
             
@@ -32,26 +37,9 @@ namespace EcommerceWeb.Api.Controllers
         {
             var ShippingInfo = await ShippingInfoRepository.GetAllAsync(filterOn, filterQuery, sortBy, isAscending, pageNumber, pagesize);
 
-            var ShippingInfoList = new List<ShippingInfoDTO>();
+            var ShippingInfoList = mapper.Map<List<ShippingInfoDTO>>(ShippingInfo);
 
-            foreach(var shippingInfo in ShippingInfo)
-            {
-                ShippingInfoList.Add(
-
-                    new ShippingInfoDTO
-                    {
-                        ShippingID = shippingInfo.ShippingID,
-                        WilayaFrom = shippingInfo.WilayaFrom,
-                        WilayaTo = shippingInfo.WilayaTo,
-                        ShipingStatus = shippingInfo.ShipingStatus,
-                        HomeDeliveryPrice = shippingInfo.HomeDeliveryPrice,
-                        OfficeDeliveryPrice = shippingInfo.OfficeDeliveryPrice,
-
-
-                    });
-
-
-            }
+            
 
             return Ok(ShippingInfoList);
 
@@ -70,16 +58,9 @@ namespace EcommerceWeb.Api.Controllers
                 return NotFound();
             }
 
-            var shipingDTO = new ShippingInfoDTO { 
+         
 
-                ShippingID = shippingInfo.ShippingID,
-                WilayaFrom= shippingInfo.WilayaFrom,
-                WilayaTo = shippingInfo.WilayaTo,
-                ShipingStatus = shippingInfo.ShipingStatus,
-                HomeDeliveryPrice = shippingInfo.HomeDeliveryPrice,
-                OfficeDeliveryPrice = shippingInfo.OfficeDeliveryPrice,
-
-            };
+            var shipingDTO = mapper.Map<ShippingInfoDTO>(shippingInfo);
 
             return Ok(shipingDTO);
 
@@ -90,33 +71,22 @@ namespace EcommerceWeb.Api.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Writer")]
 
         public async Task<IActionResult> CreateAsync([FromBody] AddShippingRequestDTO addShippingRequestDTO)
         {
-            var shippingDomainModal = new ShippingInfo {
-
-                WilayaFrom = addShippingRequestDTO.WilayaFrom,
-                WilayaTo = addShippingRequestDTO.WilayaTo,
-                ShipingStatus = addShippingRequestDTO.ShipingStatus,
-                HomeDeliveryPrice = addShippingRequestDTO.HomeDeliveryPrice,
-                OfficeDeliveryPrice = addShippingRequestDTO.OfficeDeliveryPrice,
-
-            };
-
-            shippingDomainModal=await ShippingInfoRepository.CreateAsync(shippingDomainModal);
+            
 
 
-            var shipingDTO = new ShippingInfoDTO
-            {
+            var shippingDomainModal =mapper.Map<ShippingInfo>(addShippingRequestDTO);
 
-                ShippingID = shippingDomainModal.ShippingID,
-                WilayaFrom = shippingDomainModal.WilayaFrom,
-                WilayaTo = shippingDomainModal.WilayaTo,
-                ShipingStatus = shippingDomainModal.ShipingStatus,
-                HomeDeliveryPrice = shippingDomainModal.HomeDeliveryPrice,
-                OfficeDeliveryPrice = shippingDomainModal.OfficeDeliveryPrice,
 
-            };
+
+
+            shippingDomainModal = await ShippingInfoRepository.CreateAsync(shippingDomainModal);
+
+
+            var shipingDTO = mapper.Map<ShippingInfoDTO>(shippingDomainModal);
 
             return Created($"/api/ShippingInfo/{shipingDTO.ShippingID}", shipingDTO);
 
@@ -127,6 +97,7 @@ namespace EcommerceWeb.Api.Controllers
 
         [HttpPut]
         [Route("{id}")]
+        [Authorize(Roles = "Reader")]
 
         public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] AddShippingRequestDTO addShippingRequestDTO)
         {
@@ -146,17 +117,15 @@ namespace EcommerceWeb.Api.Controllers
                 return NotFound();
             }
 
-            var shipingDTO = new ShippingInfoDTO
-            {
+           
 
-                ShippingID = shippinginfo.ShippingID,
-                WilayaFrom = shippinginfo.WilayaFrom,
-                WilayaTo = shippinginfo.WilayaTo,
-                ShipingStatus = shippinginfo.ShipingStatus,
-                HomeDeliveryPrice = shippinginfo.HomeDeliveryPrice,
-                OfficeDeliveryPrice = shippinginfo.OfficeDeliveryPrice,
+            var shipingDTO = mapper.Map<ShippingInfoDTO>(shippinginfo);
 
-            };
+
+
+
+
+
 
             return Ok(shipingDTO);
 
@@ -164,6 +133,7 @@ namespace EcommerceWeb.Api.Controllers
 
         [HttpDelete]
         [Route("{id}")]
+        [Authorize(Roles = "Writer")]
 
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
@@ -175,17 +145,7 @@ namespace EcommerceWeb.Api.Controllers
                 return NotFound();
               }
 
-            var shipingDTO = new ShippingInfoDTO
-            {
-
-                ShippingID = shippinginfo.ShippingID,
-                WilayaFrom = shippinginfo.WilayaFrom,
-                WilayaTo = shippinginfo.WilayaTo,
-                ShipingStatus = shippinginfo.ShipingStatus,
-                HomeDeliveryPrice = shippinginfo.HomeDeliveryPrice,
-                OfficeDeliveryPrice = shippinginfo.OfficeDeliveryPrice,
-
-            };
+            var shipingDTO = mapper.Map<ShippingInfoDTO>(shippinginfo);
 
             return Ok(shipingDTO);
 

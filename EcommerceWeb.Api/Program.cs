@@ -1,4 +1,5 @@
 using EcommerceWeb.Api.Data;
+using EcommerceWeb.Api.Mappings;
 using EcommerceWeb.Api.Middlewars;
 using EcommerceWeb.Api.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -122,6 +123,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.Authority = "https://dev-2q1v7v7v.us.auth0.com/";
         options.Audience = "https://localhost:5001";
     });
+
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 
 

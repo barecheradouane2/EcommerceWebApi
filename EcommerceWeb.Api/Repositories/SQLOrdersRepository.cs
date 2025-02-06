@@ -25,7 +25,7 @@ namespace EcommerceWeb.Api.Repositories
             foreach (var item in Order.OrderItems)
             {
                 var product = dbContext.ProductCatalog.FirstOrDefault(p => p.ProductID == item.ProductID);
-                if (product == null)
+                if (product == null  )
                 {
                     return null;
                 }

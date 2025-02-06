@@ -33,59 +33,7 @@ namespace EcommerceWeb.Api.Controllers
 
         [HttpGet]
 
-        /*   public async Task<IActionResult> GetAllAsync([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] string? sortBy, [FromQuery] bool? isAscending, [FromQuery] int pageNumber = 1, [FromQuery] int pagesize = 1000)
-           {
-               // get 
-               var orders = await ordersRepository.GetAllAsync(filterOn, filterQuery, sortBy, isAscending, pageNumber, pagesize);
-
-               var ordersDTO= new List<OrdersDto>();
-
-               foreach (var order in orders)
-               {
-                   //   var ordersDTOitems = new List<OrderItemsDTO>();
-
-                   var OrderItems = await orderItemsRepository.GetByOrderIDAsync(order.OrderID);
-                   var OrderItemsDTOlist = new List<OrderItemsDTO>();
-
-                   foreach (var item in OrderItems)
-                   {
-                       var product = await productRepository.GetByIdAsync(item.ProductID);
-                       OrderItemsDTOlist.Add(new OrderItemsDTO
-                       {
-                           OrderItemsID = item.OrderItemsID,
-                           OrderID = item.OrderID,
-                           ProductID = item.ProductID,
-                           Quantity = item.Quantity,
-                           Price = item.Price,
-                           TotalItemsPrice = item.TotalItemsPrice,
-                           ProductName = product?.ProductName // Access ProductName directly
-                       });
-                   }
-
-
-                   ordersDTO.Add(new OrdersDto
-                   {
-                       OrderID = order.OrderID,
-                       OrderDate = order.OrderDate,
-                       TotalAmount = order.TotalAmount,
-                       OrderStatus = order.OrderStatus,
-                       FullName = order.FullName,
-                       TelephoneNumber = order.TelephoneNumber,
-                       OrderAddress = order.OrderAddress,
-                       Wilaya = order.Wilaya,
-                       Commune = order.Commune,
-                       OrderItems= OrderItemsDTOlist,
-                       DiscountCodeID = order.DiscountCodeID,
-                       ShippingID = order.ShippingID,
-                       ShippingStatus = order.ShippingStatus
-                   });
-               }
-
-
-               // map to dto
-
-               return Ok(ordersDTO);
-           }*/
+      
 
 
         public async Task<IActionResult> GetAllAsync([FromQuery] string? filterOn, [FromQuery] string? filterQuery,
@@ -154,7 +102,7 @@ namespace EcommerceWeb.Api.Controllers
             {
                 OrderID = order.OrderID,
                 OrderDate = order.OrderDate,
-                    //TotalPrice = order.TotalPrice ,
+                  
                 OrderStatus = order.OrderStatus,
                 FullName = order.FullName,
                 TelephoneNumber = order.TelephoneNumber,
@@ -281,37 +229,6 @@ namespace EcommerceWeb.Api.Controllers
           
 
 
-            /*
-
-            {
-"orderItems": [
-{
-  "productID":1,
-  "quantity": 2
-}
-],
-"orderDate": "2025-01-18T22:48:00.835Z",
-"totalAmount": 0,
-"orderStatus": 0,
-"fullName": "radouane",
-"telephoneNumber": "055401369",
-"orderAddress": "soumame",
-"wilaya": "mila",
-"commune": "ferdjioua",
-"discountCodeID": 1,
-"shippingID": 1,
-"shippingStatus": 0
-}
-
-
-
-
-
-
-
-
-
-             */
 
 
 
@@ -462,3 +379,38 @@ namespace EcommerceWeb.Api.Controllers
 
     }
     }
+
+
+
+
+/*
+
+{
+"orderItems": [
+{
+"productID":1,
+"quantity": 2
+}
+],
+"orderDate": "2025-01-18T22:48:00.835Z",
+"totalAmount": 0,
+"orderStatus": 0,
+"fullName": "radouane",
+"telephoneNumber": "055401369",
+"orderAddress": "soumame",
+"wilaya": "mila",
+"commune": "ferdjioua",
+"discountCodeID": 1,
+"shippingID": 1,
+"shippingStatus": 0
+}
+
+
+
+
+
+
+
+
+
+ */
