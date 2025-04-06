@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace EcommerceWeb.Api.Models.Domain
 {
@@ -26,13 +27,15 @@ namespace EcommerceWeb.Api.Models.Domain
 
         // Navigation property
 
+       
         public Category Category { get; set; }
 
-        public ICollection<OrderItems> OrderItems { get; set; } = new List<OrderItems>();
+    
 
 
         public ICollection<ProductImages> ProductImages { get; set; }
 
+        public ICollection<OrderItems> OrderItems { get; set; } = new List<OrderItems>();
 
 
     }

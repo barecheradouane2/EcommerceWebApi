@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using EcommerceWeb.Api.Models.Domain;
+using EcommerceWeb.Api.Models.DTO;
 
 namespace EcommerceWeb.Api.Mappings
 {
@@ -7,6 +9,8 @@ namespace EcommerceWeb.Api.Mappings
 
         public AutoMapperProfiles()
         {
+
+
             CreateMap<Models.Domain.Category, Models.DTO.CategoryDTO>().ReverseMap();
             CreateMap<Models.Domain.Category,Models.DTO.AddCategoryRequestDTO>().ReverseMap();
             CreateMap<Models.Domain.Category, Models.DTO.UpdateCategoryDTO>().ReverseMap();
@@ -16,6 +20,17 @@ namespace EcommerceWeb.Api.Mappings
            
 
             CreateMap<Models.Domain.ProductCatalog, Models.DTO.UpdateProductRequestDTO>().ReverseMap();
+
+            CreateMap<Models.Domain.ProductCatalog, Models.DTO.AddProductRequestDTO>().ReverseMap();
+
+            CreateMap<Models.Domain.ProductImages, Models.DTO.ProductImagesDTO>().ReverseMap();
+
+
+            CreateMap<Models.Domain.Orders,Models.DTO.OrdersDto>().ReverseMap();
+
+            CreateMap<Models.Domain.ShippingInfo,Models.DTO.ShippingInfoDTO>().ReverseMap();
+
+            CreateMap<Models.Domain.ShippingInfo, Models.DTO.AddShippingRequestDTO>().ReverseMap();
 
 
         }

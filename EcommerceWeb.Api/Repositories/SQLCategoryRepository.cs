@@ -14,8 +14,20 @@ namespace EcommerceWeb.Api.Repositories
         }
 
         public async Task<List<Category>> GetAllAsync()
+
         {
-            return await dbContext.Category.ToListAsync();
+
+            var categories = await dbContext.Category.Include(c => c.ProductCatalog).ThenInclude(p => p.ProductImages).ToListAsync();
+
+
+
+
+
+
+            return categories;
+          
+
+
         }
 
         public async Task<Category?> GetByIdAsync(int id)

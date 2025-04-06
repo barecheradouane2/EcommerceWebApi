@@ -15,22 +15,30 @@ namespace EcommerceWeb.Api.Models.DTO
 
         public int Discount { get; set; }
 
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedAt { get; set; }
 
        
 
-        public CategoryDTO Category { get; set; }
+        
 
 
         public ICollection<ProductImagesDTO> ProductImages { get; set; }
 
+        //public CategoryDTO Category { get; set; }
 
 
-
-
-
+        //public ICollection<OrderItemsDTO> OrderItems { get; set; } = new List<OrderItemsDTO>();
 
 
 
     }
+
+
+
+
+
+
+
+
 }
+

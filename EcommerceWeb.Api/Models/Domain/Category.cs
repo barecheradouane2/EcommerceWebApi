@@ -13,6 +13,8 @@ namespace EcommerceWeb.Api.Models.Domain
 
         public string Description { get; set; }
 
+        //public string ImageUrl { get; set; }
+
 
         public ICollection<ProductCatalog> ProductCatalog { get; set; } = new List<ProductCatalog>();
     }

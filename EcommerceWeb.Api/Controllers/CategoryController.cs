@@ -29,7 +29,7 @@ namespace EcommerceWeb.Api.Controllers
         }
 
         [HttpGet]
-       [Authorize(Roles = "Reader,Writer")]
+       //[Authorize(Roles = "Reader,Writer")]
 
         public async Task<IActionResult> GetAllAsync()
         {
@@ -37,22 +37,27 @@ namespace EcommerceWeb.Api.Controllers
 
             var categories = await categoryRepository.GetAllAsync();
 
+            try
+            {
 
-           
+               
 
-            var categoryDTOList = mapper.Map<List<CategoryDTO>>(categories);
+                var categoryDTOList = mapper.Map<List<CategoryDTO>>(categories);
 
-            logger.LogInformation($"Returning {categories.Count} categories {JsonSerializer.Serialize(categoryDTOList)}");
+                logger.LogInformation($"Returning {categories.Count} categories {JsonSerializer.Serialize(categoryDTOList)}");
+                return Ok(categoryDTOList);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Mapping failed");
+                return StatusCode(500, "Mapping error: " + ex.Message);
+            }
 
-            
-
-
-            return Ok(categories);
 
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Reader")]
+        //[Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetByIdAsync([FromRoute] int id)
         {
             var category = await categoryRepository.GetByIdAsync(id);

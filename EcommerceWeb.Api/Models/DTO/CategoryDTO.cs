@@ -8,5 +8,12 @@
         public string CategoryName { get; set; }
 
         public string Description { get; set; }
+
+        
+        public List<ProductDTO> ProductCatalog { get; set; } = new List<ProductDTO>();
+
+
+
+     
     }
 }
