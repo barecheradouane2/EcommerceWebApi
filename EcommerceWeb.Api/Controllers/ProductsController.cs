@@ -66,7 +66,7 @@ namespace EcommerceWeb.Api.Controllers
 
         [HttpPost]
 
-       [Authorize(Roles = "Writer")]
+       //[Authorize(Roles = "Writer")]
 
         public async  Task <IActionResult> CreateAsync([FromForm] ProductUplodadImageDTO AddProductRequestDTO)
         {
@@ -115,7 +115,7 @@ namespace EcommerceWeb.Api.Controllers
         [HttpPut]
         [Route("{id}")]
 
-       [Authorize(Roles = "Reader")]
+       //[Authorize(Roles = "Reader")]
         public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromForm] ProductUplodadImageDTO updateProductRequestDTO)
         {
 
@@ -167,7 +167,7 @@ namespace EcommerceWeb.Api.Controllers
         [HttpDelete]
         [Route("{id}")]
 
-        [Authorize(Roles = "Writer")]
+        //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
             var product = await productRepository.DeleteAsync(id);

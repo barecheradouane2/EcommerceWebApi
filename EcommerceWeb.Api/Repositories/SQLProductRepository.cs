@@ -117,12 +117,15 @@ namespace EcommerceWeb.Api.Repositories
 
             foreach (var productImage in product.ProductImages)
             {
-                var localfilepath = Path.Combine(webHostEnvironment.ContentRootPath, "Images", $"{Guid.NewGuid().ToString()}{Path.GetExtension(productImage.ImageFile.FileName)}");
+                var fileName = $"{Guid.NewGuid()}{Path.GetExtension(productImage.ImageFile.FileName)}";
+                var localfilepath = Path.Combine(webHostEnvironment.ContentRootPath, "Images", fileName);
 
                 using var stream = new FileStream(localfilepath, FileMode.Create);
 
                 await productImage.ImageFile.CopyToAsync(stream);
-                productImage.ImageUrl = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}{httpContextAccessor.HttpContext.Request.PathBase}/Images/{productImage.ImageFile}{Path.GetExtension(productImage.ImageFile.FileName)}";
+
+               
+                productImage.ImageUrl = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}{httpContextAccessor.HttpContext.Request.PathBase}/Images/{fileName}";
             }
 
 
@@ -136,10 +139,10 @@ namespace EcommerceWeb.Api.Repositories
 
         public async Task<ProductCatalog?> UpdateAsync(int ID, ProductCatalog product)
         {
-            var productToUpdate =  await dbContext.ProductCatalog
-    .Include(pc => pc.Category)
-    .Include(pc => pc.ProductImages)
-    .FirstOrDefaultAsync(x => x.ProductID == ID);
+            var productToUpdate =  await dbContext.ProductCatalog.Include(pc => pc.Category).Include(pc => pc.ProductImages).FirstOrDefaultAsync(x => x.ProductID == ID);
+
+
+
             if (productToUpdate != null)
             {
                 productToUpdate.ProductName = product.ProductName;
@@ -151,19 +154,42 @@ namespace EcommerceWeb.Api.Repositories
         
                 productToUpdate.CategoryID = product.CategoryID;
 
-
-                foreach (var productImage in product.ProductImages)
+                if (product.ProductImages != null)
                 {
-                    var localfilepath = Path.Combine(webHostEnvironment.ContentRootPath, "Images", $"{Guid.NewGuid().ToString()}{Path.GetExtension(productImage.ImageFile.FileName)}");
 
-                    using var stream = new FileStream(localfilepath, FileMode.Create);
+                    foreach (var productImage in productToUpdate.ProductImages)
+                    {
+                        var oldFileName = Path.GetFileName(new Uri(productImage.ImageUrl).LocalPath);
+                        var oldFilePath = Path.Combine(webHostEnvironment.ContentRootPath, "Images", oldFileName);
 
-                    await productImage.ImageFile.CopyToAsync(stream);
-                    productImage.ImageUrl = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}{httpContextAccessor.HttpContext.Request.PathBase}/Images/{productImage.ImageFile}{Path.GetExtension(productImage.ImageFile.FileName)}";
+
+
+                        if (System.IO.File.Exists(oldFilePath))
+                        {
+                            System.IO.File.Delete(oldFilePath);
+                        }
+
+                    }
+
+
+                    foreach (var productImage in product.ProductImages)
+                    {
+                        var fileName = $"{Guid.NewGuid()}{Path.GetExtension(productImage.ImageFile.FileName)}";
+                        var localfilepath = Path.Combine(webHostEnvironment.ContentRootPath, "Images", fileName);
+
+                        using var stream = new FileStream(localfilepath, FileMode.Create);
+
+                        await productImage.ImageFile.CopyToAsync(stream);
+                        productImage.ImageUrl = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}{httpContextAccessor.HttpContext.Request.PathBase}/Images/{fileName}";
+                    }
+
+
+                    productToUpdate.ProductImages = product.ProductImages;
+
                 }
 
 
-                productToUpdate.ProductImages = product.ProductImages;
+              
 
 
 
@@ -177,11 +203,26 @@ namespace EcommerceWeb.Api.Repositories
         {
             var productToDelete  = await dbContext.ProductCatalog.Include(pc => pc.Category).Include(pc => pc.ProductImages).FirstOrDefaultAsync(x => x.ProductID == ID);
 
-
-
             if (productToDelete != null)
             {
-                dbContext.ProductCatalog.Remove(productToDelete);
+
+                foreach (var productImage in productToDelete.ProductImages)
+                {
+
+                    var oldFileName = Path.GetFileName(new Uri(productImage.ImageUrl).LocalPath);
+                    var oldFilePath = Path.Combine(webHostEnvironment.ContentRootPath, "Images", oldFileName);
+
+
+
+                    if (System.IO.File.Exists(oldFilePath))
+                    {
+                        System.IO.File.Delete(oldFilePath);
+                    }
+
+                }
+
+
+                    dbContext.ProductCatalog.Remove(productToDelete);
                 await dbContext.SaveChangesAsync();
                 return productToDelete;
             }

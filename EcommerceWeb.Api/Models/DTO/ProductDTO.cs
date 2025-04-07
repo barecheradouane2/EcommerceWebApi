@@ -15,11 +15,15 @@ namespace EcommerceWeb.Api.Models.DTO
 
         public int Discount { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public int Stock { get; set; }
 
-       
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow.Date;
 
-        
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow.Date;
+
+
+
+
 
 
         public ICollection<ProductImagesDTO> ProductImages { get; set; }
