@@ -6,6 +6,7 @@ using EcommerceWeb.Api.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace EcommerceWeb.Api.Controllers
@@ -76,11 +77,25 @@ namespace EcommerceWeb.Api.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles = "Writer")]
-        public async Task<IActionResult> CreateAsync([FromBody] AddCategoryRequestDTO AddCategoryRequestDTO)
+        //[Authorize(Roles = "Writer")]
+        public async Task<IActionResult> CreateAsync([FromForm] AddCategoryRequestDTO AddCategoryRequestDTO)
         {
 
-            if(ModelState.IsValid == false)
+            var exists = await dbContext.Category.AnyAsync(c => c.CategoryName == AddCategoryRequestDTO.CategoryName);
+            if (exists)
+            {
+                ModelState.AddModelError("CategoryName", "This category name already exists.");
+             
+            }
+
+
+
+
+
+
+
+
+            if (ModelState.IsValid == false)
             {
                 return BadRequest(ModelState);
             }
@@ -113,9 +128,9 @@ namespace EcommerceWeb.Api.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        [Authorize(Roles = "Writer")]
+        //[Authorize(Roles = "Writer")]
 
-        public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] UpdateCategoryDTO UpdateCategoryDTO)
+        public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromForm] UpdateCategoryDTO UpdateCategoryDTO)
         {
 
             if (ModelState.IsValid == false)
@@ -141,7 +156,7 @@ namespace EcommerceWeb.Api.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        [Authorize(Roles = "Writer")]
+        //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
            var category= await categoryRepository.DeleteAsync(id);

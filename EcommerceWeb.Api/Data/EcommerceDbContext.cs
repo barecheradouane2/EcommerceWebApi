@@ -24,7 +24,7 @@ namespace EcommerceWeb.Api.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            var categories = new List <Category>() { new Category { CategoryID = 1, CategoryName = "Electronics" , Description =" Best Quality " }, new Category { CategoryID = 2, CategoryName = "Clothing" , Description =" All Size "} };
+          //  var categories = new List <Category>() { new Category {  CategoryID = 1, CategoryName = "Electronics" , Description =" Best Quality " }, new Category { CategoryID = 2, CategoryName = "Clothing" , Description =" All Size "} };
 
             modelBuilder.Entity<OrderItems>()
                 .HasOne(oi => oi.ProductCatalog)
@@ -32,9 +32,13 @@ namespace EcommerceWeb.Api.Data
                 .HasForeignKey(oi => oi.ProductID)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Category>()
+        .HasIndex(c => c.CategoryName)
+        .IsUnique();
 
 
-            modelBuilder.Entity<Category>().HasData(categories);
+
+           // modelBuilder.Entity<Category>().HasData(categories);
 
             // Configure relationships between Orders and OrderItems
             modelBuilder.Entity<Orders>()

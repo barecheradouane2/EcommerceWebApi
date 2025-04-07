@@ -11,9 +11,18 @@ namespace EcommerceWeb.Api.Models.Domain
         public int CategoryID { get; set; }
         public string CategoryName { get; set; }
 
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
-        //public string ImageUrl { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow.Date;
+
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow.Date;
+
+
+        [NotMapped]
+        public IFormFile? ImageFile { get; set; }
+
+        public string ImagePath { get; set; } = string.Empty;
 
 
         public ICollection<ProductCatalog> ProductCatalog { get; set; } = new List<ProductCatalog>();

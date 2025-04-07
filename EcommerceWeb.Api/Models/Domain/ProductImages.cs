@@ -9,8 +9,8 @@ namespace EcommerceWeb.Api.Models.Domain
         public int ImageID { get; set; }
 
         [NotMapped]
-        public IFormFile ImageFile { get; set; }
-        public string ImageUrl { get; set; }
+        public IFormFile ImageFile { get; set; } 
+        public string ImageUrl { get; set; }  
 
         public int ImageOrder { get; set; }
 
