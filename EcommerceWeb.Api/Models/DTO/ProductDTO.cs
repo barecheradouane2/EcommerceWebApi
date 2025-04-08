@@ -21,12 +21,10 @@ namespace EcommerceWeb.Api.Models.DTO
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow.Date;
 
-
-
-
-
-
         public ICollection<ProductImagesDTO> ProductImages { get; set; }
+
+
+        public ICollection<ProductSizeDTO> ProductSizes { get; set; } 
 
         //public CategoryDTO Category { get; set; }
 

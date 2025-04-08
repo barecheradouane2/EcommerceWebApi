@@ -15,15 +15,28 @@ namespace EcommerceWeb.Api.Mappings
             CreateMap<Models.Domain.Category,Models.DTO.AddCategoryRequestDTO>().ReverseMap();
             CreateMap<Models.Domain.Category, Models.DTO.UpdateCategoryDTO>().ReverseMap();
 
-            CreateMap<Models.Domain.ProductCatalog, Models.DTO.ProductDTO>().ReverseMap();
+            //CreateMap<Models.Domain.ProductCatalog, Models.DTO.ProductDTO>().ReverseMap();
+            CreateMap<Models.Domain.ProductSize, Models.DTO.ProductSizeDTO>().ReverseMap();
+            CreateMap<Models.Domain.ProductColorVariant, Models.DTO.ProductColorVariantDTO>().ReverseMap();
 
-           
+
+            CreateMap<ProductCatalog, ProductDTO>()
+    .ForMember(dest => dest.Stock, opt => opt.MapFrom(src =>
+        src.ProductSizes.SelectMany(ps => ps.ProductColorVariant).Sum(pcv => pcv.Quantity)
+    ));
+
+
+
 
             CreateMap<Models.Domain.ProductCatalog, Models.DTO.UpdateProductRequestDTO>().ReverseMap();
 
             CreateMap<Models.Domain.ProductCatalog, Models.DTO.AddProductRequestDTO>().ReverseMap();
 
             CreateMap<Models.Domain.ProductImages, Models.DTO.ProductImagesDTO>().ReverseMap();
+
+        
+
+
 
 
             CreateMap<Models.Domain.Orders,Models.DTO.OrdersDto>().ReverseMap();

@@ -89,12 +89,6 @@ namespace EcommerceWeb.Api.Controllers
             }
 
 
-
-
-
-
-
-
             if (ModelState.IsValid == false)
             {
                 return BadRequest(ModelState);

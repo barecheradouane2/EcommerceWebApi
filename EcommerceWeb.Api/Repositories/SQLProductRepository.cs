@@ -21,11 +21,11 @@ namespace EcommerceWeb.Api.Repositories
             this.webHostEnvironment = webHostEnvironment;
             this.httpContextAccessor = httpContextAccessor;
         }
-        public async Task<List<ProductCatalog>> GetAllAsync([FromQuery] string? filterOn=null, [FromQuery] string? filterQuery = null, [FromQuery] string? sortBy=null, [FromQuery] bool? isAscending=true,  int pageNumber = 1,  int pagesize = 1000)
+        public async Task<List<ProductCatalog>> GetAllAsync([FromQuery] string? filterOn=null, [FromQuery] string? filterQuery = null, [FromQuery] string? sortBy=null, [FromQuery] bool? isAscending=true,  int pageNumber = 1,  int pagesize = 9)
         {
 
 
-            var products = dbContext.ProductCatalog.Include(pc => pc.Category).Include(pc => pc.ProductImages).AsQueryable();
+            var products = dbContext.ProductCatalog.Include(pc => pc.Category).Include(pc => pc.ProductImages).Include(pc => pc.ProductSizes).ThenInclude(ps => ps.ProductColorVariant).AsQueryable();
 
             if (string.IsNullOrEmpty(filterOn)==false &&  string.IsNullOrEmpty(filterQuery)==false)
             {
@@ -106,7 +106,9 @@ namespace EcommerceWeb.Api.Repositories
 
             return await dbContext.ProductCatalog
     .Include(pc => pc.Category) 
-    .Include(pc => pc.ProductImages) 
+    .Include(pc => pc.ProductImages)
+    .Include(pc => pc.ProductSizes).ThenInclude(ps => ps.ProductColorVariant)
+
     .FirstOrDefaultAsync(x => x.ProductID == id); 
 
           
@@ -131,15 +133,29 @@ namespace EcommerceWeb.Api.Repositories
 
 
 
+            //try
+            //{
 
-            await   dbContext.ProductCatalog.AddAsync(product);
+
+                await dbContext.ProductCatalog.AddAsync(product);
             await dbContext.SaveChangesAsync();
             return product;
-        }
+
+            //}
+            //catch (DbUpdateException ex)
+            //{
+
+            //    return null;
+            
+               
+
+            //}
+
+          }
 
         public async Task<ProductCatalog?> UpdateAsync(int ID, ProductCatalog product)
         {
-            var productToUpdate =  await dbContext.ProductCatalog.Include(pc => pc.Category).Include(pc => pc.ProductImages).FirstOrDefaultAsync(x => x.ProductID == ID);
+            var productToUpdate =  await dbContext.ProductCatalog.Include(pc => pc.Category).Include(pc => pc.ProductImages).Include(pc => pc.ProductSizes).ThenInclude(ps => ps.ProductColorVariant).FirstOrDefaultAsync(x => x.ProductID == ID);
 
 
 
@@ -153,6 +169,7 @@ namespace EcommerceWeb.Api.Repositories
                 productToUpdate.CreatedAt = product.CreatedAt;
         
                 productToUpdate.CategoryID = product.CategoryID;
+
 
                 if (product.ProductImages != null)
                 {
@@ -188,8 +205,16 @@ namespace EcommerceWeb.Api.Repositories
 
                 }
 
+                // when it passed the productsizes [] i want to update ProductSizes data and assign it to [] and it removed from db
 
-              
+                productToUpdate.ProductSizes= product.ProductSizes;
+
+
+          
+
+
+
+
 
 
 

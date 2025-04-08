@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace EcommerceWeb.Api.Controllers
 {
@@ -57,6 +58,11 @@ namespace EcommerceWeb.Api.Controllers
 
             var productDto = mapper.Map<ProductDTO>(product);
 
+            productDto.Stock = productDto.ProductSizes.SelectMany(ps => ps.ProductColorVariant).Sum(pcv => pcv.Quantity);
+
+
+
+
 
 
             return Ok(productDto);
@@ -71,30 +77,78 @@ namespace EcommerceWeb.Api.Controllers
         public async  Task <IActionResult> CreateAsync([FromForm] ProductUplodadImageDTO AddProductRequestDTO)
         {
 
-         
+
+            var exists = await dbContext.ProductCatalog.AnyAsync(c =>c.ProductName  == AddProductRequestDTO.ProductName);
+
+
+            if (exists)
+            {
+                ModelState.AddModelError("ProductName", "This ProductName  already exists.");
+
+            }
+
+
+            if (ModelState.IsValid == false)
+            {
+                return BadRequest(ModelState);
+            }
+
+
+
+
+
+
+
+
+
+
+
+            var sizes = JsonSerializer.Deserialize<List<ProductSizeDTO>>(AddProductRequestDTO.ProductSizes);
+
 
 
             var productDomainModel = new ProductCatalog
-           {
-               ProductName = AddProductRequestDTO.ProductName,
-               Description = AddProductRequestDTO.Description,
-               Price = AddProductRequestDTO.Price,
-               Discount = AddProductRequestDTO.Discount,
-               Stock = AddProductRequestDTO.Stock,
-               CreatedAt = DateTime.Now,
-               CategoryID = AddProductRequestDTO.CategoryID,
+            {
+                ProductName = AddProductRequestDTO.ProductName,
+                Description = AddProductRequestDTO.Description,
+                Price = AddProductRequestDTO.Price,
+                Discount = AddProductRequestDTO.Discount,
 
-               ProductImages = AddProductRequestDTO.ImageFile.Select((item, index) => new ProductImages
-               {
-                   ImageOrder = index,
-                   ImageFile = item,
+           
 
 
 
-               }).ToList()
+                //Stock = AddProductRequestDTO.Stock,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                CategoryID = AddProductRequestDTO.CategoryID,
+
+                ProductImages = AddProductRequestDTO.ImageFile?.Select((item, index) => new ProductImages
+                {
+                    ImageOrder = index,
+                    ImageFile = item
+                }).ToList(),
+
+                ProductSizes = sizes?.Select(sizeDto => new ProductSize
+                {
+                    Size = sizeDto.Size,
+                    Quantity = sizeDto.Quantity,
+                    ProductColorVariant = sizeDto.ProductColorVariant?.Select(colorDto => new ProductColorVariant
+                    {
+                        Color = colorDto.Color,
+                        Quantity = colorDto.Quantity
+                    }).ToList()
+                }).ToList()  ?? new List<ProductSize>(),
 
 
-           };
+
+
+
+
+
+
+
+            };
 
             productDomainModel = await productRepository.CreateAsync(productDomainModel);
 
@@ -126,7 +180,7 @@ namespace EcommerceWeb.Api.Controllers
             product.Description = updateProductRequestDTO.Description;
             product.Price = updateProductRequestDTO.Price;
             product.Discount = updateProductRequestDTO.Discount;
-            product.Stock = updateProductRequestDTO.Stock;
+            //product.Stock = updateProductRequestDTO.Stock;
             product.CreatedAt = DateTime.Now;
             product.CategoryID = updateProductRequestDTO.CategoryID;
 
@@ -138,6 +192,21 @@ namespace EcommerceWeb.Api.Controllers
                 ImageFile = item,
 
             }).ToList();
+
+            var sizes = JsonSerializer.Deserialize<List<ProductSizeDTO>>(updateProductRequestDTO.ProductSizes);
+
+            product.ProductSizes = sizes?.Select(sizeDto => new ProductSize
+            {
+                Size = sizeDto.Size,
+                Quantity = sizeDto.Quantity,
+                ProductColorVariant = sizeDto.ProductColorVariant?.Select(colorDto => new ProductColorVariant
+                {
+                    Color = colorDto.Color,
+                    Quantity = colorDto.Quantity
+                }).ToList()
+            }).ToList() ?? new List<ProductSize>();
+
+
 
 
 
