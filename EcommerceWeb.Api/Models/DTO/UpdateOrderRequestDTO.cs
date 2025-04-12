@@ -27,7 +27,7 @@ namespace EcommerceWeb.Api.Models.DTO
 
         public string Commune { get; set; }
 
-        public int DiscountCodeID { get; set; }
+        //public int DiscountCodeID { get; set; }
 
         public int ShippingID { get; set; }
 

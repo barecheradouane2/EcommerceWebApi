@@ -11,11 +11,11 @@ namespace EcommerceWeb.Api.Models.DTO
         public List<AddOrderItemsDTO> OrderItems { get; set; }
 
 
-        public DateTime OrderDate { get; set; }=DateTime.Now;
+        //public DateTime OrderDate { get; set; }=DateTime.Now;
 
-        public decimal TotalPrice { get; set; } = 0;
+        //public decimal TotalPrice { get; set; } = 0;
 
-        public int OrderStatus { get; set; } = 0;
+        //public int OrderStatus { get; set; } = 0;
 
         public string FullName { get; set; }
 
@@ -27,11 +27,11 @@ namespace EcommerceWeb.Api.Models.DTO
 
         public string Commune { get; set; }
 
-        public int DiscountCodeID { get; set; }
+        //public int DiscountCodeID { get; set; }
 
         public int ShippingID { get; set; }
 
-        public int ShippingStatus { get; set; } = 0;
+        //public int ShippingStatus { get; set; } = 0;
 
 
 

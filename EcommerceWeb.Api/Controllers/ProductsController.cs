@@ -58,7 +58,7 @@ namespace EcommerceWeb.Api.Controllers
 
             var productDto = mapper.Map<ProductDTO>(product);
 
-            productDto.Stock = productDto.ProductSizes.SelectMany(ps => ps.ProductColorVariant).Sum(pcv => pcv.Quantity);
+            //productDto.Stock = productDto.ProductSizes.SelectMany(ps => ps.ProductColorVariant).Sum(pcv => pcv.Quantity);
 
 
 
@@ -180,7 +180,7 @@ namespace EcommerceWeb.Api.Controllers
             product.Description = updateProductRequestDTO.Description;
             product.Price = updateProductRequestDTO.Price;
             product.Discount = updateProductRequestDTO.Discount;
-            //product.Stock = updateProductRequestDTO.Stock;
+            product.Stock = updateProductRequestDTO.Stock;
             product.CreatedAt = DateTime.Now;
             product.CategoryID = updateProductRequestDTO.CategoryID;
 

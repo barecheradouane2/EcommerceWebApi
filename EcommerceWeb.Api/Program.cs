@@ -87,6 +87,9 @@ builder.Services.AddScoped<IOrdersRepositorycs, SQLOrdersRepository>();
 
 builder.Services.AddScoped<IOrdersItems, SQLOrdersItemsDTO>();
 
+builder.Services.AddScoped<IShippingInfoRepository,SQLShippingInfoRepository>();
+
+
 builder.Services.AddIdentityCore<IdentityUser>()
     .AddRoles<IdentityRole>().AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("EcommerceWeb")
     .AddEntityFrameworkStores<EcommerceWebAuthDbContext>()

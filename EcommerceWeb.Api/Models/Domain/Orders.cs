@@ -7,10 +7,10 @@ namespace EcommerceWeb.Api.Models.Domain
     {
         [Key]
         public int OrderID { get; set; }
-        public DateTime OrderDate { get; set; }
-        public decimal TotalPrice { get; set; }
+        public DateTime OrderDate { get; set; } = DateTime.Now;
+        public decimal TotalPrice { get; set; } = 0;
 
-        public int OrderStatus { get; set; }
+        public int OrderStatus { get; set; } = 0;
 
         public string FullName { get; set; }
 
@@ -22,18 +22,18 @@ namespace EcommerceWeb.Api.Models.Domain
 
         public string OrderAddress { get; set; }
 
-        public int DiscountCodeID { get; set; }
+        //public int DiscountCodeID { get; set; }
 
         public int ShippingID { get; set; }
 
-        public int ShippingStatus { get; set; }
+        public int ShippingStatus { get; set; } = 0;
 
         // Navigation properties
         [ForeignKey("ShippingID")]  // Explicitly link the foreign key
         public ShippingInfo ShippingInfo { get; set; }
 
         [ForeignKey("DiscountCodeID")]  // Explicitly link the foreign key
-        public DiscountCodes DiscountCodes { get; set; }
+        //public DiscountCodes DiscountCodes { get; set; }
 
         public ICollection<OrderItems> OrderItems { get; set; } = new List<OrderItems>();
     }

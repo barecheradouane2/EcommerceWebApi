@@ -15,7 +15,7 @@ namespace EcommerceWeb.Api.Models.DTO
 
         public int Discount { get; set; }
 
-        //public int Stock { get; set; } = 1;
+        public int Stock { get; set; } = 1;
 
         //public DateTime CreatedAt { get; set; }
 

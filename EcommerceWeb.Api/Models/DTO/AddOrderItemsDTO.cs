@@ -11,6 +11,9 @@ namespace EcommerceWeb.Api.Models.DTO
 
         public int Quantity { get; set; }
 
+        public string Color { get; set; } = string.Empty;
+        public string Size { get; set; } = string.Empty;
+
         [JsonIgnore]
         public decimal Price { get; set; }
 

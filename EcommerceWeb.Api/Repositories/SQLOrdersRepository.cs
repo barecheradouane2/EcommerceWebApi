@@ -22,13 +22,76 @@ namespace EcommerceWeb.Api.Repositories
 
             var shippininfo = dbContext.ShippingInfo.FirstOrDefault(s => s.ShippingID == Order.ShippingID);
 
+          //  var productcataog=dbContext.ProductCatalog.FirstOrDefault(p => p.ProductID == Order.OrderItems.FirstOrDefault().ProductID).FirstOrDefault(s => s.Size == "M")
+
+
             foreach (var item in Order.OrderItems)
             {
-                var product = dbContext.ProductCatalog.FirstOrDefault(p => p.ProductID == item.ProductID);
-                if (product == null  )
+                //var product = dbContext.ProductCatalog.FirstOrDefault(p => p.ProductID == item.ProductID
+
+
+                var product = await dbContext.ProductCatalog
+                                                .Include(pc => pc.ProductSizes).ThenInclude(ps => ps.ProductColorVariant)
+                            .FirstOrDefaultAsync(x => x.ProductID == item.ProductID);
+
+                if (product == null)
                 {
                     return null;
                 }
+
+                if(product.Stock < item.Quantity)
+                {
+                    throw new Exception("Not enough stock available for product: " + product.ProductName);
+                }
+                else
+                {
+                    product.Stock -= item.Quantity;
+
+                }
+
+                if (product.ProductSizes.Count > 0)
+                {
+
+                    var productsize = product.ProductSizes?.FirstOrDefault(s => s.Size == item.Size);
+
+                    if (productsize != null && productsize.Quantity >= item.Quantity)
+                    {
+                        //handle where the qunatiy of other higher then the quntity of product 
+                        productsize.Quantity -= item.Quantity;
+
+
+                    }
+                    else
+                    {
+                        throw new Exception("Not enough stock available for size: " + item.Size);
+                    }
+
+                    if(productsize.ProductColorVariant.Count > 0)
+                    {
+
+                        var productcolor = product.ProductSizes?.FirstOrDefault(s => s.Size == item.Size)?.ProductColorVariant
+                            .FirstOrDefault(c => c.Color == item.Color);
+
+
+                        if (productcolor != null && item.Color != string.Empty && productcolor.Quantity >= item.Quantity)
+                        {
+
+                            productcolor.Quantity -= item.Quantity;
+
+
+                        }
+                        else
+                        {
+                            throw new Exception("Not enough stock available for color: " + item.Color);
+                        }
+
+
+
+                    }
+
+                }
+
+                
                 item.Price = product.Price - product.Discount;
                 item.TotalItemsPrice = item.Price * item.Quantity;
 
@@ -102,12 +165,11 @@ namespace EcommerceWeb.Api.Repositories
         public async Task<Orders?> DeleteAsync(int ID)
         {
             var order = await dbContext.Orders
-    .Include(o => o.OrderItems)
-        .ThenInclude(oi => oi.ProductCatalog)
-    .FirstOrDefaultAsync(o => o.OrderID == ID);
+                .Include(P => P.ShippingInfo).Include(o => o.OrderItems).ThenInclude(oi => oi.ProductCatalog).FirstOrDefaultAsync(o => o.OrderID == ID);
 
 
-          //  var order = await dbContext.Orders.Include(o => o.OrderItems).FirstOrDefaultAsync(o => o.OrderID == ID);
+
+            //  var order = await dbContext.Orders.Include(o => o.OrderItems).FirstOrDefaultAsync(o => o.OrderID == ID);
             if (order != null)
             {
                 dbContext.Orders.Remove(order);
@@ -220,7 +282,7 @@ namespace EcommerceWeb.Api.Repositories
                 order.Wilaya = Order.Wilaya;
                 order.Commune = Order.Commune;
                 order.OrderAddress = Order.OrderAddress;
-                order.DiscountCodeID = Order.DiscountCodeID;
+                //order.DiscountCodeID = Order.DiscountCodeID;
                 order.ShippingID = Order.ShippingID;
                 order.ShippingStatus = Order.ShippingStatus;
 
@@ -228,14 +290,71 @@ namespace EcommerceWeb.Api.Repositories
 
                 foreach (var item in Order.OrderItems)
                 {
-                    var product = dbContext.ProductCatalog.FirstOrDefault(p => p.ProductID == item.ProductID);
+
+                    var product = await dbContext.ProductCatalog
+                                                .Include(pc => pc.ProductSizes).ThenInclude(ps => ps.ProductColorVariant)
+                            .FirstOrDefaultAsync(x => x.ProductID == item.ProductID);
+
                     if (product == null)
                     {
                         return null;
                     }
+
+                    if (product.Stock < item.Quantity)
+                    {
+                        throw new Exception("Not enough stock available for product: " + product.ProductName);
+                    }
+                    else
+                    {
+                        product.Stock -= item.Quantity;
+
+                    }
+
+                    if (product.ProductSizes.Count > 0)
+                    {
+
+                        var productsize = product.ProductSizes?.FirstOrDefault(s => s.Size == item.Size);
+
+                        if (productsize != null && productsize.Quantity >= item.Quantity)
+                        {
+                            //handle where the qunatiy of other higher then the quntity of product 
+                            productsize.Quantity -= item.Quantity;
+
+
+                        }
+                        else
+                        {
+                            throw new Exception("Not enough stock available for size: " + item.Size);
+                        }
+
+                        if (productsize.ProductColorVariant.Count > 0)
+                        {
+
+                            var productcolor = product.ProductSizes?.FirstOrDefault(s => s.Size == item.Size)?.ProductColorVariant
+                                .FirstOrDefault(c => c.Color == item.Color);
+
+
+                            if (productcolor != null && item.Color != string.Empty && productcolor.Quantity >= item.Quantity)
+                            {
+
+                                productcolor.Quantity -= item.Quantity;
+
+
+                            }
+                            else
+                            {
+                                throw new Exception("Not enough stock available for color: " + item.Color);
+                            }
+
+
+
+                        }
+
+                    }
+
+
                     item.Price = product.Price - product.Discount;
                     item.TotalItemsPrice = item.Price * item.Quantity;
-                    TotalPrice += item.TotalItemsPrice;
 
                     item.ProductCatalog= product;
                 }

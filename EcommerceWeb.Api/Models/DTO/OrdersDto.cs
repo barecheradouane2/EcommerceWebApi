@@ -50,8 +50,8 @@ namespace EcommerceWeb.Api.Models.DTO
         public string Commune { get; set; }
         public string OrderAddress { get; set; }
 
-        [JsonIgnore]
-        public int DiscountCodeID { get; set; }
+        //[JsonIgnore]
+        //public int DiscountCodeID { get; set; }
 
         [JsonIgnore]
         public int ShippingID { get; set; }

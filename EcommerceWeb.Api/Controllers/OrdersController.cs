@@ -1,4 +1,5 @@
-﻿using EcommerceWeb.Api.Data;
+﻿using AutoMapper;
+using EcommerceWeb.Api.Data;
 using EcommerceWeb.Api.Models.Domain;
 using EcommerceWeb.Api.Models.DTO;
 using EcommerceWeb.Api.Repositories;
@@ -20,14 +21,17 @@ namespace EcommerceWeb.Api.Controllers
 
         private readonly IOrdersItems orderItemsRepository;
 
+        private readonly IMapper mapper;
 
 
-        public OrdersController(EcommerceDbContext dbContext, IOrdersItems orderItemsRepository, IOrdersRepositorycs ordersRepositorycs, IProductRepository productRepository)
+
+        public OrdersController(EcommerceDbContext dbContext, IOrdersItems orderItemsRepository, IOrdersRepositorycs ordersRepositorycs, IProductRepository productRepository, IMapper mapper)
         {
             this.orderItemsRepository = orderItemsRepository;
             this.ordersRepository = ordersRepositorycs;
             this.dbContext = dbContext;
             this.productRepository = productRepository;
+            this.mapper = mapper;
         }
 
 
@@ -38,7 +42,7 @@ namespace EcommerceWeb.Api.Controllers
 
         public async Task<IActionResult> GetAllAsync([FromQuery] string? filterOn, [FromQuery] string? filterQuery,
     [FromQuery] string? sortBy, [FromQuery] bool? isAscending, [FromQuery] int pageNumber = 1,
-    [FromQuery] int pageSize = 50)
+    [FromQuery] int pageSize = 10)
         {
             // Validate pageSize
             pageSize = Math.Min(pageSize, 50);
@@ -58,7 +62,7 @@ namespace EcommerceWeb.Api.Controllers
                 OrderAddress = order.OrderAddress,
                 Wilaya = order.Wilaya,
                 Commune = order.Commune,
-                DiscountCodeID = order.DiscountCodeID,
+                //DiscountCodeID = order.DiscountCodeID,
                 ShippingID = order.ShippingID,
                 ShippingStatus = order.ShippingStatus,
               ShippingInfo =  new ShippingInfoDTO
@@ -76,6 +80,8 @@ namespace EcommerceWeb.Api.Controllers
                 {
                     OrderItemsID = item.OrderItemsID,
                     OrderID = item.OrderID,
+                    Color = item.Color,
+                    Size = item.Size,
                     ProductID = item.ProductID,
                     Quantity = item.Quantity,
                     Price = item.Price,
@@ -109,7 +115,7 @@ namespace EcommerceWeb.Api.Controllers
                 OrderAddress = order.OrderAddress,
                 Wilaya = order.Wilaya,
                 Commune = order.Commune,
-                DiscountCodeID = order.DiscountCodeID,
+                //DiscountCodeID = order.DiscountCodeID,
                 ShippingID = order.ShippingID,
                 ShippingStatus = order.ShippingStatus,
 
@@ -127,6 +133,9 @@ namespace EcommerceWeb.Api.Controllers
                 OrderItems = order.OrderItems.Select(oi => new OrderItemsDTO
                 {
                     OrderItemsID = oi.OrderItemsID,
+
+                    Color = oi.Color,
+                    Size = oi.Size,
 
                     ProductID = oi.ProductID,
                     ProductName = oi.ProductCatalog.ProductName,
@@ -141,108 +150,133 @@ namespace EcommerceWeb.Api.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles = "Writer")]
+        //[Authorize(Roles = "Writer")]
 
         public async Task<IActionResult> CreateOrderAsync([FromBody] AddOrderRequestDTO addOrderRequestDTO)
         {
-
-            var OrderDomainModel = new Orders
+            try
             {
-                OrderDate = addOrderRequestDTO.OrderDate,
-                TotalPrice = addOrderRequestDTO.TotalPrice,
-                OrderStatus = addOrderRequestDTO.OrderStatus,
-               
-                FullName = addOrderRequestDTO.FullName,
-                TelephoneNumber = addOrderRequestDTO.TelephoneNumber,
-                OrderAddress = addOrderRequestDTO.OrderAddress,
-                Wilaya = addOrderRequestDTO.Wilaya,
-                Commune = addOrderRequestDTO.Commune,
-               
-                DiscountCodeID = addOrderRequestDTO.DiscountCodeID,
-                ShippingID = addOrderRequestDTO.ShippingID,
-                ShippingStatus = addOrderRequestDTO.ShippingStatus,
 
 
-                OrderItems = addOrderRequestDTO.OrderItems.Select(item => new OrderItems
+                var OrderDomainModel = new Orders
                 {
-                    ProductID = item.ProductID,
-                    Quantity = item.Quantity,
-                    Price = item.Price,
-                   TotalItemsPrice = item.TotalItemsPrice
-                }).ToList()
+                    //OrderDate = addOrderRequestDTO.OrderDate,
+                    //TotalPrice = addOrderRequestDTO.TotalPrice,
+                    //OrderStatus = addOrderRequestDTO.OrderStatus,
+
+                    FullName = addOrderRequestDTO.FullName,
+                    TelephoneNumber = addOrderRequestDTO.TelephoneNumber,
+                    OrderAddress = addOrderRequestDTO.OrderAddress,
+                    Wilaya = addOrderRequestDTO.Wilaya,
+                    Commune = addOrderRequestDTO.Commune,
+
+                    //DiscountCodeID = addOrderRequestDTO.DiscountCodeID,
+                    ShippingID = addOrderRequestDTO.ShippingID,
+                    //ShippingStatus = addOrderRequestDTO.ShippingStatus,
 
 
-            };
+                    OrderItems = addOrderRequestDTO.OrderItems.Select(item => new OrderItems
+                    {
+                        ProductID = item.ProductID,
+                        Quantity = item.Quantity,
+                        Price = item.Price,
+                        Color = item.Color,
+                        Size = item.Size,
 
-            
-            var newOrder = await ordersRepository.CreateAsync(OrderDomainModel);
-
-            var OrdersDto = new OrdersDto
-              {
-
-                  OrderID = newOrder.OrderID,
-                  OrderDate = newOrder.OrderDate,
-                 //TotalPrice = newOrder.TotalPrice,
-                OrderStatus = newOrder.OrderStatus,
-                  FullName = newOrder.FullName,
-                  TelephoneNumber = newOrder.TelephoneNumber,
-                  OrderAddress = newOrder.OrderAddress,
-                  Wilaya = newOrder.Wilaya,
-                  Commune = newOrder.Commune,
-                  DiscountCodeID = newOrder.DiscountCodeID,
-                  ShippingID = newOrder.ShippingID,
-                  ShippingStatus = newOrder.ShippingStatus,
-                  ShippingInfo = new ShippingInfoDTO
-                  {
-                      ShippingID = newOrder.ShippingInfo.ShippingID,
-                      WilayaFrom = newOrder.ShippingInfo.WilayaFrom,
-                      WilayaTo = newOrder.ShippingInfo.WilayaTo,
-
-                      HomeDeliveryPrice = newOrder.ShippingInfo.HomeDeliveryPrice,
-                      OfficeDeliveryPrice = newOrder.ShippingInfo.OfficeDeliveryPrice
+                        TotalItemsPrice = item.TotalItemsPrice
+                    }).ToList()
 
 
-                  },
-                OrderItems = newOrder.OrderItems.Select(x => new OrderItemsDTO
-                   {
-                       OrderItemsID = x.OrderItemsID,
-                       OrderID = x.OrderID,
-                       ProductID = x.ProductID,
-                      
-                       Quantity = x.Quantity,
-                       Price = x.Price,
-                       TotalItemsPrice = x.TotalItemsPrice,
-                       ProductName = x.ProductCatalog?.ProductName // Access ProductName directly
-                   }).ToList()
+                };
 
-                    
 
-            };
+                var newOrder = await ordersRepository.CreateAsync(OrderDomainModel);
+
+                var OrdersDto = new OrdersDto
+                {
+
+                    OrderID = newOrder.OrderID,
+                    OrderDate = newOrder.OrderDate,
+                    //TotalPrice = newOrder.TotalPrice,
+                    OrderStatus = newOrder.OrderStatus,
+                    FullName = newOrder.FullName,
+                    TelephoneNumber = newOrder.TelephoneNumber,
+                    OrderAddress = newOrder.OrderAddress,
+                    Wilaya = newOrder.Wilaya,
+                    Commune = newOrder.Commune,
+                    //DiscountCodeID = newOrder.DiscountCodeID,
+                    ShippingID = newOrder.ShippingID,
+                    ShippingStatus = newOrder.ShippingStatus,
+                    ShippingInfo = new ShippingInfoDTO
+                    {
+                        ShippingID = newOrder.ShippingInfo.ShippingID,
+                        WilayaFrom = newOrder.ShippingInfo.WilayaFrom,
+                        WilayaTo = newOrder.ShippingInfo.WilayaTo,
+
+                        HomeDeliveryPrice = newOrder.ShippingInfo.HomeDeliveryPrice,
+                        OfficeDeliveryPrice = newOrder.ShippingInfo.OfficeDeliveryPrice
+
+
+                    },
+                    OrderItems = newOrder.OrderItems.Select(x => new OrderItemsDTO
+                    {
+                        OrderItemsID = x.OrderItemsID,
+                        OrderID = x.OrderID,
+                        ProductID = x.ProductID,
+                        Color = x.Color,
+                        Size = x.Size,
+
+
+                        Quantity = x.Quantity,
+                        Price = x.Price,
+                        TotalItemsPrice = x.TotalItemsPrice,
+                        ProductName = x.ProductCatalog?.ProductName // Access ProductName directly
+                    }).ToList()
+
+
+
+                };
+
+
 
 
                 if (newOrder == null)
-                 {
-                     return NotFound(new { Message = $"Order with ID {newOrder.OrderID} not found." });
-                 }
+                {
+                    return NotFound(new { Message = $"Order with ID {newOrder.OrderID} not found." });
+                }
+
+
+                return Created($"/api/Orders/{OrdersDto.OrderID}", OrdersDto);
+
+
+
+
+
+
+
+
+
+
+
+
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(new { message = ex.Message });
+
+
+            }
 
 
           
-
-
-
-
-
-
-
-
-            return Created($"/api/Orders/{OrdersDto.OrderID}", OrdersDto);
-
 
         }
 
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Writer")]
+        //[Authorize(Roles = "Writer")]
 
         public async Task<IActionResult> DeleteOrderAsync(int id)
         {
@@ -253,20 +287,22 @@ namespace EcommerceWeb.Api.Controllers
                 return NotFound();
             }
 
-            var orderDto = new OrdersDto
+
+            var ordersDto = new OrdersDto
             {
                 OrderID = order.OrderID,
                 OrderDate = order.OrderDate,
-                  //TotalPrice = order.TotalPrice,
+
                 OrderStatus = order.OrderStatus,
                 FullName = order.FullName,
                 TelephoneNumber = order.TelephoneNumber,
                 OrderAddress = order.OrderAddress,
                 Wilaya = order.Wilaya,
                 Commune = order.Commune,
-                DiscountCodeID = order.DiscountCodeID,
+                //DiscountCodeID = order.DiscountCodeID,
                 ShippingID = order.ShippingID,
                 ShippingStatus = order.ShippingStatus,
+
                 ShippingInfo = new ShippingInfoDTO
                 {
                     ShippingID = order.ShippingInfo.ShippingID,
@@ -281,21 +317,72 @@ namespace EcommerceWeb.Api.Controllers
                 OrderItems = order.OrderItems.Select(oi => new OrderItemsDTO
                 {
                     OrderItemsID = oi.OrderItemsID,
+
+                    Color = oi.Color,
+                    Size = oi.Size,
+
                     ProductID = oi.ProductID,
-                    ProductName=oi.ProductCatalog.ProductName,
+                    ProductName = oi.ProductCatalog.ProductName,
                     Quantity = oi.Quantity,
                     Price = oi.Price,
                     TotalItemsPrice = oi.TotalItemsPrice
                 }).ToList()
             };
 
-            return Ok(orderDto);
+
+
+
+
+
+
+
+            //var orderDto = mapper.Map<OrdersDto>(order);
+
+            //var orderDto = new OrdersDto
+            //{
+            //    OrderID = order.OrderID,
+            //    OrderDate = order.OrderDate,
+            //      //TotalPrice = order.TotalPrice,
+            //    OrderStatus = order.OrderStatus,
+            //    FullName = order.FullName,
+            //    TelephoneNumber = order.TelephoneNumber,
+            //    OrderAddress = order.OrderAddress,
+            //    Wilaya = order.Wilaya,
+            //    Commune = order.Commune,
+            //    //DiscountCodeID = order.DiscountCodeID,
+            //    ShippingID = order.ShippingID,
+            //    ShippingStatus = order.ShippingStatus,
+            //    ShippingInfo = new ShippingInfoDTO
+            //    {
+            //        ShippingID = order.ShippingInfo.ShippingID,
+            //        WilayaFrom = order.ShippingInfo.WilayaFrom,
+            //        WilayaTo = order.ShippingInfo.WilayaTo,
+
+            //        HomeDeliveryPrice = order.ShippingInfo.HomeDeliveryPrice,
+            //        OfficeDeliveryPrice = order.ShippingInfo.OfficeDeliveryPrice
+
+
+            //    },
+            //    OrderItems = order.OrderItems.Select(oi => new OrderItemsDTO
+            //    {
+            //        OrderItemsID = oi.OrderItemsID,
+            //        Color = oi.Color,
+            //        Size = oi.Size,
+            //        ProductID = oi.ProductID,
+            //        ProductName=oi.ProductCatalog.ProductName,
+            //        Quantity = oi.Quantity,
+            //        Price = oi.Price,
+            //        TotalItemsPrice = oi.TotalItemsPrice
+            //    }).ToList()
+            //};
+
+            return Ok(ordersDto);
         }
 
 
         [HttpPut("{id}")]
 
-        [Authorize(Roles = "Reader")]
+        //[Authorize(Roles = "Reader")]
 
         public async Task<IActionResult> UpdateOrderAsync(int id, [FromBody] UpdateOrderRequestDTO addOrderRequestDTO)
         {
@@ -316,7 +403,7 @@ namespace EcommerceWeb.Api.Controllers
             ordertest.OrderAddress = addOrderRequestDTO.OrderAddress;
             ordertest.Wilaya = addOrderRequestDTO.Wilaya;
             ordertest.Commune = addOrderRequestDTO.Commune;
-            ordertest.DiscountCodeID = addOrderRequestDTO.DiscountCodeID;
+            //ordertest.DiscountCodeID = addOrderRequestDTO.DiscountCodeID;
             ordertest.ShippingID = addOrderRequestDTO.ShippingID;
             ordertest.ShippingStatus = addOrderRequestDTO.ShippingStatus;
 
@@ -327,7 +414,10 @@ namespace EcommerceWeb.Api.Controllers
                 OrderItemsID= item.OrderItemsID,
                 ProductID = item.ProductID,
                 Quantity = item.Quantity,
-               
+                Size = item.Size,
+                Color = item.Color,
+
+
             }).ToList();
 
             var updatedOrder = await ordersRepository.UpdateAsync(id, ordertest);
@@ -343,7 +433,7 @@ namespace EcommerceWeb.Api.Controllers
                 OrderAddress = updatedOrder.OrderAddress,
                 Wilaya = updatedOrder.Wilaya,
                 Commune = updatedOrder.Commune,
-                DiscountCodeID = updatedOrder.DiscountCodeID,
+                //DiscountCodeID = updatedOrder.DiscountCodeID,
                 ShippingID = updatedOrder.ShippingID,
                 ShippingStatus = updatedOrder.ShippingStatus,
                 ShippingInfo = new ShippingInfoDTO
@@ -363,6 +453,8 @@ namespace EcommerceWeb.Api.Controllers
                     ProductID = oi.ProductID,
                     ProductName = oi.ProductCatalog.ProductName,
                     Quantity = oi.Quantity,
+                    Size =oi.Size,
+                    Color=oi.Color,
                     Price = oi.ProductCatalog.Price,
                     TotalItemsPrice = oi.Quantity * oi.ProductCatalog.Price
                 }).ToList()

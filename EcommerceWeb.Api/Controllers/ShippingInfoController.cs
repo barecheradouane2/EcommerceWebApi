@@ -71,7 +71,7 @@ namespace EcommerceWeb.Api.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles = "Writer")]
+        //[Authorize(Roles = "Writer")]
 
         public async Task<IActionResult> CreateAsync([FromBody] AddShippingRequestDTO addShippingRequestDTO)
         {
@@ -97,7 +97,7 @@ namespace EcommerceWeb.Api.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        [Authorize(Roles = "Reader")]
+        //[Authorize(Roles = "Reader")]
 
         public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] AddShippingRequestDTO addShippingRequestDTO)
         {
@@ -133,7 +133,7 @@ namespace EcommerceWeb.Api.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        [Authorize(Roles = "Writer")]
+        //[Authorize(Roles = "Writer")]
 
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {

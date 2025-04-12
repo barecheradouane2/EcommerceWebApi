@@ -17,6 +17,10 @@ namespace EcommerceWeb.Api.Models.DTO
 
         public string ProductName { get; set; }
 
+        public string Size { get; set; }
+
+        public string Color { get; set; }
+
         public int Quantity { get; set; }
 
         // Navigation property to ProductCatalog to access the price
