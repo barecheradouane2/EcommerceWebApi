@@ -15,5 +15,9 @@ namespace EcommerceWeb.Api.Repositories
         Task<ShippingInfo?> UpdateAsync(int ID, ShippingInfo shippingInfo);
 
         Task<ShippingInfo?> DeleteAsync(int ID);
+
+        Task <List<Commune> > GetCommunOfWilaya (int WilayaID);
+
+
     }
 }

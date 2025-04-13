@@ -7,7 +7,7 @@ namespace EcommerceWeb.Api.Models.Domain
         [Key]
         public int ShippingID { get; set; }
 
-        public string WilayaFrom { get; set; }
+      
 
         public string WilayaTo { get; set; }
 

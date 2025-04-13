@@ -52,7 +52,7 @@ namespace EcommerceWeb.Api.Repositories
             {
                 if (filterOn == "WilayaFrom")
                 {
-                    shipping = shipping.Where(x => x.WilayaFrom.Contains(filterQuery));
+                    //shipping = shipping.Where(x => x.WilayaFrom.Contains(filterQuery));
                 }
                  if (filterOn == "WilayaTo")
                 {
@@ -69,11 +69,11 @@ namespace EcommerceWeb.Api.Repositories
                 {
                     if (isAscending == true)
                     {
-                        shipping = shipping.OrderBy(x => x.WilayaFrom);
+                        //shipping = shipping.OrderBy(x => x.WilayaFrom);
                     }
                     else
                     {
-                        shipping = shipping.OrderByDescending(x => x.WilayaFrom);
+                        //shipping = shipping.OrderByDescending(x => x.WilayaFrom);
                     }
 
                 }
@@ -101,7 +101,7 @@ namespace EcommerceWeb.Api.Repositories
 
             if (ShipingToUpdate!=null)
             {
-                ShipingToUpdate.WilayaFrom = shippingInfo.WilayaFrom;
+                //ShipingToUpdate.WilayaFrom = shippingInfo.WilayaFrom;
                 ShipingToUpdate.WilayaTo = shippingInfo.WilayaTo;
                 ShipingToUpdate.OfficeDeliveryPrice = shippingInfo.OfficeDeliveryPrice;
                 ShipingToUpdate.HomeDeliveryPrice= shippingInfo.HomeDeliveryPrice;
@@ -116,5 +116,23 @@ namespace EcommerceWeb.Api.Repositories
 
 
         }
+
+
+        public async Task<List<Commune>> GetCommunOfWilaya(int WilayaID)
+        {
+            var communes = await dbContext.Commune
+                .Where(x => x.WilayaID == WilayaID)
+                .ToListAsync();
+
+            return communes;
+        }
+
+
+
+
+
+
+
+
     }
 }

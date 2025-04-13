@@ -3,11 +3,11 @@
     public class AddShippingRequestDTO
     {
 
-        public string WilayaFrom { get; set; }
+     
 
         public string WilayaTo { get; set; }
 
-        public int ShipingStatus { get; set; } = 0;
+        public int ShipingStatus { get; set; } = 1;
 
 
         public decimal HomeDeliveryPrice { get; set; }

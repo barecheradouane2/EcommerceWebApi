@@ -39,9 +39,11 @@ namespace EcommerceWeb.Api.Controllers
 
             var ShippingInfoList = mapper.Map<List<ShippingInfoDTO>>(ShippingInfo);
 
-            
+
 
             return Ok(ShippingInfoList);
+
+
 
         }
 
@@ -53,19 +55,46 @@ namespace EcommerceWeb.Api.Controllers
         {
             var shippingInfo = await ShippingInfoRepository.GetByIdAsync(id);
 
-            if(shippingInfo == null)
+            if (shippingInfo == null)
             {
                 return NotFound();
             }
 
-         
+
 
             var shipingDTO = mapper.Map<ShippingInfoDTO>(shippingInfo);
 
             return Ok(shipingDTO);
 
 
+
+
         }
+
+
+        [HttpGet]
+        [Route("communes/{id}")]
+
+        public async Task<IActionResult> GetCommunOfWilaya([FromRoute] int id)
+        {
+            var Communes = await ShippingInfoRepository.GetCommunOfWilaya(id);
+            if (Communes == null)
+            {
+                return NotFound();
+            }
+            var communesDTO = mapper.Map<List<CommuneDTO>>(Communes);
+
+            return Ok(communesDTO);
+
+
+
+
+
+
+        }
+
+
+
 
 
 
@@ -75,10 +104,10 @@ namespace EcommerceWeb.Api.Controllers
 
         public async Task<IActionResult> CreateAsync([FromBody] AddShippingRequestDTO addShippingRequestDTO)
         {
-            
 
 
-            var shippingDomainModal =mapper.Map<ShippingInfo>(addShippingRequestDTO);
+
+            var shippingDomainModal = mapper.Map<ShippingInfo>(addShippingRequestDTO);
 
 
 
@@ -104,20 +133,20 @@ namespace EcommerceWeb.Api.Controllers
 
             var shippinginfo = new ShippingInfo();
 
-            shippinginfo.WilayaFrom = addShippingRequestDTO.WilayaFrom;
+           
             shippinginfo.WilayaTo = addShippingRequestDTO.WilayaTo;
             shippinginfo.ShipingStatus = addShippingRequestDTO.ShipingStatus;
             shippinginfo.OfficeDeliveryPrice = addShippingRequestDTO.OfficeDeliveryPrice;
             shippinginfo.HomeDeliveryPrice = addShippingRequestDTO.HomeDeliveryPrice;
 
-            shippinginfo=await ShippingInfoRepository.UpdateAsync(id, shippinginfo);
+            shippinginfo = await ShippingInfoRepository.UpdateAsync(id, shippinginfo);
 
             if (shippinginfo == null)
             {
                 return NotFound();
             }
 
-           
+
 
             var shipingDTO = mapper.Map<ShippingInfoDTO>(shippinginfo);
 
@@ -129,6 +158,8 @@ namespace EcommerceWeb.Api.Controllers
 
             return Ok(shipingDTO);
 
+
+
         }
 
         [HttpDelete]
@@ -139,11 +170,12 @@ namespace EcommerceWeb.Api.Controllers
         {
             var shippinginfo = await ShippingInfoRepository.DeleteAsync(id);
 
-            if(shippinginfo == null) {
+            if (shippinginfo == null)
+            {
 
 
                 return NotFound();
-              }
+            }
 
             var shipingDTO = mapper.Map<ShippingInfoDTO>(shippinginfo);
 

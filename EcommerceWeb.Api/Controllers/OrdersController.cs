@@ -68,7 +68,7 @@ namespace EcommerceWeb.Api.Controllers
               ShippingInfo =  new ShippingInfoDTO
               {
                   ShippingID = order.ShippingInfo.ShippingID,
-                  WilayaFrom = order.ShippingInfo.WilayaFrom,
+               
                   WilayaTo = order.ShippingInfo.WilayaTo,
                   
                   HomeDeliveryPrice = order.ShippingInfo.HomeDeliveryPrice,
@@ -122,7 +122,7 @@ namespace EcommerceWeb.Api.Controllers
                 ShippingInfo = new ShippingInfoDTO
                 {
                     ShippingID = order.ShippingInfo.ShippingID,
-                    WilayaFrom = order.ShippingInfo.WilayaFrom,
+                    //WilayaFrom = order.ShippingInfo.WilayaFrom,
                     WilayaTo = order.ShippingInfo.WilayaTo,
 
                     HomeDeliveryPrice = order.ShippingInfo.HomeDeliveryPrice,
@@ -210,7 +210,7 @@ namespace EcommerceWeb.Api.Controllers
                     ShippingInfo = new ShippingInfoDTO
                     {
                         ShippingID = newOrder.ShippingInfo.ShippingID,
-                        WilayaFrom = newOrder.ShippingInfo.WilayaFrom,
+                        //WilayaFrom = newOrder.ShippingInfo.WilayaFrom,
                         WilayaTo = newOrder.ShippingInfo.WilayaTo,
 
                         HomeDeliveryPrice = newOrder.ShippingInfo.HomeDeliveryPrice,
@@ -306,7 +306,7 @@ namespace EcommerceWeb.Api.Controllers
                 ShippingInfo = new ShippingInfoDTO
                 {
                     ShippingID = order.ShippingInfo.ShippingID,
-                    WilayaFrom = order.ShippingInfo.WilayaFrom,
+                    //WilayaFrom = order.ShippingInfo.WilayaFrom,
                     WilayaTo = order.ShippingInfo.WilayaTo,
 
                     HomeDeliveryPrice = order.ShippingInfo.HomeDeliveryPrice,
@@ -439,7 +439,7 @@ namespace EcommerceWeb.Api.Controllers
                 ShippingInfo = new ShippingInfoDTO
                 {
                     ShippingID = order.ShippingInfo.ShippingID,
-                    WilayaFrom = order.ShippingInfo.WilayaFrom,
+                    //WilayaFrom = order.ShippingInfo.WilayaFrom,
                     WilayaTo = order.ShippingInfo.WilayaTo,
 
                     HomeDeliveryPrice = order.ShippingInfo.HomeDeliveryPrice,
