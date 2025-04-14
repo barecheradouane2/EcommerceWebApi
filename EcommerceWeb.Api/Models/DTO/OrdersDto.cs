@@ -23,7 +23,7 @@ namespace EcommerceWeb.Api.Models.DTO
         {
             get
             {
-                return OrderItems?.Sum(oi => oi.TotalItemsPrice)  ?? 0;
+                return OrderItems?.Sum(oi => oi.TotalItemsPrice) + ShippingPrice ?? 0;
             }
         }
 
@@ -46,8 +46,41 @@ namespace EcommerceWeb.Api.Models.DTO
 
         public string FullName { get; set; }
         public string TelephoneNumber { get; set; }
-        public string Wilaya { get; set; }
-        public string Commune { get; set; }
+
+        [JsonIgnore]
+        public int WilayaID { get; set; }
+
+        [JsonIgnore]
+        public int CommuneID { get; set; }
+
+
+        [JsonIgnore] // Hides this property during JSON serialization
+        public Wilaya Wilaya { get; set; }
+
+        [JsonIgnore]
+        public Commune Commune { get; set; }
+
+        public string WilayaName
+        {
+            get
+            {
+                return Wilaya?.WilayaName ?? string.Empty;
+            }
+        }
+
+        public string CommuneName
+        {
+            get
+            {
+                return Commune?.CommuneName ?? string.Empty;
+            }
+        }
+
+
+
+
+        //public string Wilaya { get; set; }
+        //public string Commune { get; set; }
         public string OrderAddress { get; set; }
 
         //[JsonIgnore]

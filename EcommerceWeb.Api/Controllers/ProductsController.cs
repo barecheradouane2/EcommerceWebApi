@@ -95,14 +95,6 @@ namespace EcommerceWeb.Api.Controllers
 
 
 
-
-
-
-
-
-
-
-
             var sizes = JsonSerializer.Deserialize<List<ProductSizeDTO>>(AddProductRequestDTO.ProductSizes);
 
 
@@ -118,7 +110,7 @@ namespace EcommerceWeb.Api.Controllers
 
 
 
-                //Stock = AddProductRequestDTO.Stock,
+                Stock = AddProductRequestDTO.Stock,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 CategoryID = AddProductRequestDTO.CategoryID,

@@ -60,8 +60,13 @@ namespace EcommerceWeb.Api.Controllers
                 FullName = order.FullName,
                 TelephoneNumber = order.TelephoneNumber,
                 OrderAddress = order.OrderAddress,
+                WilayaID = order.WilayaID,
+                CommuneID = order.CommuneID,
                 Wilaya = order.Wilaya,
                 Commune = order.Commune,
+
+                //Wilaya = order.Wilaya,
+                //Commune = order.Commune,
                 //DiscountCodeID = order.DiscountCodeID,
                 ShippingID = order.ShippingID,
                 ShippingStatus = order.ShippingStatus,
@@ -113,8 +118,12 @@ namespace EcommerceWeb.Api.Controllers
                 FullName = order.FullName,
                 TelephoneNumber = order.TelephoneNumber,
                 OrderAddress = order.OrderAddress,
+                WilayaID = order.WilayaID,
+                CommuneID = order.CommuneID,
                 Wilaya = order.Wilaya,
                 Commune = order.Commune,
+                //Wilaya = order.Wilaya,
+                //Commune = order.Commune,
                 //DiscountCodeID = order.DiscountCodeID,
                 ShippingID = order.ShippingID,
                 ShippingStatus = order.ShippingStatus,
@@ -167,12 +176,16 @@ namespace EcommerceWeb.Api.Controllers
                     FullName = addOrderRequestDTO.FullName,
                     TelephoneNumber = addOrderRequestDTO.TelephoneNumber,
                     OrderAddress = addOrderRequestDTO.OrderAddress,
-                    Wilaya = addOrderRequestDTO.Wilaya,
-                    Commune = addOrderRequestDTO.Commune,
+                    WilayaID = addOrderRequestDTO.WilayaID,
+                    CommuneID = addOrderRequestDTO.CommuneID,
+                    //Wilaya = addOrderRequestDTO.Wilaya,
+                    //Commune = addOrderRequestDTO.Commune,
 
                     //DiscountCodeID = addOrderRequestDTO.DiscountCodeID,
                     ShippingID = addOrderRequestDTO.ShippingID,
                     //ShippingStatus = addOrderRequestDTO.ShippingStatus,
+
+
 
 
                     OrderItems = addOrderRequestDTO.OrderItems.Select(item => new OrderItems
@@ -202,15 +215,25 @@ namespace EcommerceWeb.Api.Controllers
                     FullName = newOrder.FullName,
                     TelephoneNumber = newOrder.TelephoneNumber,
                     OrderAddress = newOrder.OrderAddress,
+                    WilayaID = newOrder.WilayaID,
+                    CommuneID = newOrder.CommuneID,
+
                     Wilaya = newOrder.Wilaya,
                     Commune = newOrder.Commune,
+
+                    
+
                     //DiscountCodeID = newOrder.DiscountCodeID,
                     ShippingID = newOrder.ShippingID,
                     ShippingStatus = newOrder.ShippingStatus,
                     ShippingInfo = new ShippingInfoDTO
                     {
                         ShippingID = newOrder.ShippingInfo.ShippingID,
-                        //WilayaFrom = newOrder.ShippingInfo.WilayaFrom,
+
+                        ShipingStatus = newOrder.ShippingInfo.ShipingStatus,
+
+
+                        
                         WilayaTo = newOrder.ShippingInfo.WilayaTo,
 
                         HomeDeliveryPrice = newOrder.ShippingInfo.HomeDeliveryPrice,
@@ -230,7 +253,7 @@ namespace EcommerceWeb.Api.Controllers
                         Quantity = x.Quantity,
                         Price = x.Price,
                         TotalItemsPrice = x.TotalItemsPrice,
-                        ProductName = x.ProductCatalog?.ProductName // Access ProductName directly
+                        ProductName = x.ProductCatalog?.ProductName 
                     }).ToList()
 
 
@@ -297,8 +320,10 @@ namespace EcommerceWeb.Api.Controllers
                 FullName = order.FullName,
                 TelephoneNumber = order.TelephoneNumber,
                 OrderAddress = order.OrderAddress,
-                Wilaya = order.Wilaya,
-                Commune = order.Commune,
+                WilayaID = order.WilayaID,
+                CommuneID = order.CommuneID,
+                //Wilaya = order.Wilaya,
+                //Commune = order.Commune,
                 //DiscountCodeID = order.DiscountCodeID,
                 ShippingID = order.ShippingID,
                 ShippingStatus = order.ShippingStatus,
@@ -401,8 +426,11 @@ namespace EcommerceWeb.Api.Controllers
             ordertest.FullName = addOrderRequestDTO.FullName;
             ordertest.TelephoneNumber = addOrderRequestDTO.TelephoneNumber;
             ordertest.OrderAddress = addOrderRequestDTO.OrderAddress;
-            ordertest.Wilaya = addOrderRequestDTO.Wilaya;
-            ordertest.Commune = addOrderRequestDTO.Commune;
+            ordertest.WilayaID = addOrderRequestDTO.WilayaID;
+            ordertest.CommuneID = addOrderRequestDTO.CommuneID;
+
+            //ordertest.Wilaya = addOrderRequestDTO.Wilaya;
+            //ordertest.Commune = addOrderRequestDTO.Commune;
             //ordertest.DiscountCodeID = addOrderRequestDTO.DiscountCodeID;
             ordertest.ShippingID = addOrderRequestDTO.ShippingID;
             ordertest.ShippingStatus = addOrderRequestDTO.ShippingStatus;
@@ -431,8 +459,8 @@ namespace EcommerceWeb.Api.Controllers
                 FullName = updatedOrder.FullName,
                 TelephoneNumber = updatedOrder.TelephoneNumber,
                 OrderAddress = updatedOrder.OrderAddress,
-                Wilaya = updatedOrder.Wilaya,
-                Commune = updatedOrder.Commune,
+                //Wilaya = updatedOrder.Wilaya,
+                //Commune = updatedOrder.Commune,
                 //DiscountCodeID = updatedOrder.DiscountCodeID,
                 ShippingID = updatedOrder.ShippingID,
                 ShippingStatus = updatedOrder.ShippingStatus,

@@ -23,9 +23,11 @@ namespace EcommerceWeb.Api.Models.DTO
 
         public string OrderAddress { get; set; }
 
-        public string Wilaya { get; set; }
+        public int WilayaID { get; set; }
+        public int CommuneID { get; set; }
+        //public string Wilaya { get; set; }
 
-        public string Commune { get; set; }
+        //public string Commune { get; set; }
 
         //public int DiscountCodeID { get; set; }
 

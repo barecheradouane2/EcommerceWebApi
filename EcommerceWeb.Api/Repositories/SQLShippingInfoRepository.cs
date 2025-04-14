@@ -102,11 +102,13 @@ namespace EcommerceWeb.Api.Repositories
             if (ShipingToUpdate!=null)
             {
                 //ShipingToUpdate.WilayaFrom = shippingInfo.WilayaFrom;
-                ShipingToUpdate.WilayaTo = shippingInfo.WilayaTo;
+                //ShipingToUpdate.WilayaTo = shippingInfo.WilayaTo;
                 ShipingToUpdate.OfficeDeliveryPrice = shippingInfo.OfficeDeliveryPrice;
                 ShipingToUpdate.HomeDeliveryPrice= shippingInfo.HomeDeliveryPrice;
 
                 ShipingToUpdate.ShipingStatus= shippingInfo.ShipingStatus;
+
+                await dbContext.SaveChangesAsync();
 
                 return ShipingToUpdate;
 

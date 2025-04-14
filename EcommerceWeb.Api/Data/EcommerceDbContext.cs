@@ -24,7 +24,22 @@ namespace EcommerceWeb.Api.Data
         {
             base.OnModelCreating(modelBuilder);
 
-          //  var categories = new List <Category>() { new Category {  CategoryID = 1, CategoryName = "Electronics" , Description =" Best Quality " }, new Category { CategoryID = 2, CategoryName = "Clothing" , Description =" All Size "} };
+
+
+            modelBuilder.Entity<Orders>()
+                .HasOne(o => o.Wilaya)
+                .WithMany()
+                .HasForeignKey(o => o.WilayaID)
+                .OnDelete(DeleteBehavior.Restrict);  // Or DeleteBehavior.NoAction
+
+            modelBuilder.Entity<Orders>()
+                .HasOne(o => o.Commune)
+                .WithMany()
+                .HasForeignKey(o => o.CommuneID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            //  var categories = new List <Category>() { new Category {  CategoryID = 1, CategoryName = "Electronics" , Description =" Best Quality " }, new Category { CategoryID = 2, CategoryName = "Clothing" , Description =" All Size "} };
 
             modelBuilder.Entity<OrderItems>()
                 .HasOne(oi => oi.ProductCatalog)

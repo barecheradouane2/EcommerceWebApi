@@ -128,16 +128,16 @@ namespace EcommerceWeb.Api.Controllers
         [Route("{id}")]
         //[Authorize(Roles = "Reader")]
 
-        public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] AddShippingRequestDTO addShippingRequestDTO)
+        public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] UpdateShippingRequestDTO UpdateShippingRequestDTO)
         {
 
             var shippinginfo = new ShippingInfo();
 
            
-            shippinginfo.WilayaTo = addShippingRequestDTO.WilayaTo;
-            shippinginfo.ShipingStatus = addShippingRequestDTO.ShipingStatus;
-            shippinginfo.OfficeDeliveryPrice = addShippingRequestDTO.OfficeDeliveryPrice;
-            shippinginfo.HomeDeliveryPrice = addShippingRequestDTO.HomeDeliveryPrice;
+           
+            shippinginfo.ShipingStatus = UpdateShippingRequestDTO.ShipingStatus;
+            shippinginfo.OfficeDeliveryPrice = UpdateShippingRequestDTO.OfficeDeliveryPrice;
+            shippinginfo.HomeDeliveryPrice = UpdateShippingRequestDTO.HomeDeliveryPrice;
 
             shippinginfo = await ShippingInfoRepository.UpdateAsync(id, shippinginfo);
 

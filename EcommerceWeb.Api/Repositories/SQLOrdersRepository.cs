@@ -20,7 +20,11 @@ namespace EcommerceWeb.Api.Repositories
         {
             decimal TotalPrice = 0;
 
+            
+
             var shippininfo = dbContext.ShippingInfo.FirstOrDefault(s => s.ShippingID == Order.ShippingID);
+
+
 
           //  var productcataog=dbContext.ProductCatalog.FirstOrDefault(p => p.ProductID == Order.OrderItems.FirstOrDefault().ProductID).FirstOrDefault(s => s.Size == "M")
 
@@ -108,7 +112,10 @@ namespace EcommerceWeb.Api.Repositories
             {
                 TotalPrice += shippininfo.OfficeDeliveryPrice;
             }
-            Order.TotalPrice = TotalPrice;
+            Order.TotalPrice = TotalPrice ;
+
+            Order.Wilaya = dbContext.Wilaya.FirstOrDefault(w => w.WilayaID == Order.WilayaID);
+            Order.Commune = dbContext.Commune.FirstOrDefault(c => c.CommuneID == Order.CommuneID);
 
 
 
@@ -164,7 +171,7 @@ namespace EcommerceWeb.Api.Repositories
 
         public async Task<Orders?> DeleteAsync(int ID)
         {
-            var order = await dbContext.Orders
+            var order = await dbContext.Orders.Include(w => w.Wilaya).Include(c => c.Commune)
                 .Include(P => P.ShippingInfo).Include(o => o.OrderItems).ThenInclude(oi => oi.ProductCatalog).FirstOrDefaultAsync(o => o.OrderID == ID);
 
 
@@ -184,7 +191,7 @@ namespace EcommerceWeb.Api.Repositories
         public async Task<List<Orders>> GetAllAsync([FromQuery] string? filterOn = null, [FromQuery] string? filterQuery = null, [FromQuery] string? sortBy = null, [FromQuery] bool? isAscending = true, [FromQuery] int pageNumber = 1, [FromQuery] int pagesize = 1000)
         {
 
-            var orders = await dbContext.Orders.Include(o => o.OrderItems)
+            var orders = await dbContext.Orders.Include(w => w.Wilaya).Include(c => c.Commune).Include(o => o.OrderItems)
     .ThenInclude(oi => oi.ProductCatalog).Include(P => P.ShippingInfo) // Include related products
     .ToListAsync();
 
@@ -258,7 +265,7 @@ namespace EcommerceWeb.Api.Repositories
         {
 
 
-            return await dbContext.Orders
+            return await dbContext.Orders.Include(w=>w.Wilaya).Include(c=> c.Commune)
                 .Include(P => P.ShippingInfo).Include(o => o.OrderItems).ThenInclude(oi => oi.ProductCatalog).FirstOrDefaultAsync(o => o.OrderID == id);
 
 
@@ -266,7 +273,7 @@ namespace EcommerceWeb.Api.Repositories
 
         public async Task<Orders?> UpdateAsync(int ID, Orders Order)
         {
-            var order = await dbContext.Orders.Include(o=>o.ShippingInfo)
+            var order = await dbContext.Orders.Include(w => w.Wilaya).Include(c => c.Commune).Include(o=>o.ShippingInfo)
          .Include(o => o.OrderItems).ThenInclude(oi => oi.ProductCatalog).FirstOrDefaultAsync(o => o.OrderID == ID);
 
          
