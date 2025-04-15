@@ -26,14 +26,14 @@ namespace EcommerceWeb.Api.Repositories
         public async Task<List<Category>> GetAllAsync()
 
         {
-            var categories = await dbContext.Category.Include(c => c.ProductCatalog).ThenInclude(p => p.ProductImages).ToListAsync();
+            var categories = await dbContext.Category.ToListAsync();
          return categories;
           
         }
 
         public async Task<Category?> GetByIdAsync(int id)
         {
-            return await dbContext.Category.Include(c => c.ProductCatalog).ThenInclude(p => p.ProductImages).FirstOrDefaultAsync(c => c.CategoryID == id);
+            return await dbContext.Category.FirstOrDefaultAsync(c => c.CategoryID == id);
 
 
 
@@ -73,8 +73,7 @@ namespace EcommerceWeb.Api.Repositories
 
         public async Task<Category?> UpdateAsync(int ID, Category Category)
         {
-            var CategoryToUpdate = await dbContext.Category.Include(c => c.ProductCatalog)
-            .ThenInclude(p => p.ProductImages).FirstOrDefaultAsync(c => c.CategoryID == ID);
+            var CategoryToUpdate = await dbContext.Category.FirstOrDefaultAsync(c => c.CategoryID == ID);
             if (CategoryToUpdate != null)
             {
                 CategoryToUpdate.CategoryName = Category.CategoryName;

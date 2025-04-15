@@ -30,9 +30,7 @@ namespace EcommerceWeb.Api.Models.Domain
         [ForeignKey("CategoryID")]
         public int CategoryID { get; set; }
 
-       
-
-       
+      
         public Category Category { get; set; }
 
 

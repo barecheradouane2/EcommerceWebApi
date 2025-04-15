@@ -25,7 +25,7 @@ namespace EcommerceWeb.Api.Repositories
         {
 
 
-            var products = dbContext.ProductCatalog.Include(pc => pc.Category).Include(pc => pc.ProductImages).Include(pc => pc.ProductSizes).ThenInclude(ps => ps.ProductColorVariant).AsQueryable();
+            var products = dbContext.ProductCatalog.Include(pc => pc.ProductImages).Include(pc => pc.ProductSizes).ThenInclude(ps => ps.ProductColorVariant).AsQueryable();
 
             if (string.IsNullOrEmpty(filterOn)==false &&  string.IsNullOrEmpty(filterQuery)==false)
             {
@@ -104,18 +104,18 @@ namespace EcommerceWeb.Api.Repositories
         public async Task<ProductCatalog?> GetByIdAsync(int id)
         {
 
-            return await dbContext.ProductCatalog
-    .Include(pc => pc.Category) 
-    .Include(pc => pc.ProductImages)
-    .Include(pc => pc.ProductSizes).ThenInclude(ps => ps.ProductColorVariant)
+            return await dbContext.ProductCatalog.Include(pc => pc.ProductImages).Include(pc => pc.ProductSizes).ThenInclude(ps => ps.ProductColorVariant)
+    .FirstOrDefaultAsync(x => x.ProductID == id);
 
-    .FirstOrDefaultAsync(x => x.ProductID == id); 
 
-          
+
+
         }
 
         public async Task<ProductCatalog> CreateAsync(ProductCatalog product)
         {
+
+            
 
             foreach (var productImage in product.ProductImages)
             {
@@ -155,6 +155,9 @@ namespace EcommerceWeb.Api.Repositories
 
         public async Task<ProductCatalog?> UpdateAsync(int ID, ProductCatalog product)
         {
+
+          
+
             var productToUpdate =  await dbContext.ProductCatalog.Include(pc => pc.Category).Include(pc => pc.ProductImages).Include(pc => pc.ProductSizes).ThenInclude(ps => ps.ProductColorVariant).FirstOrDefaultAsync(x => x.ProductID == ID);
 
 
@@ -167,7 +170,9 @@ namespace EcommerceWeb.Api.Repositories
                 productToUpdate.Discount = product.Discount;
                 productToUpdate.Stock = product.Stock;
                 productToUpdate.CreatedAt = product.CreatedAt;
-        
+
+         
+
                 productToUpdate.CategoryID = product.CategoryID;
 
 

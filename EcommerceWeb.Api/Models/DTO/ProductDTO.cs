@@ -1,5 +1,6 @@
 ﻿using EcommerceWeb.Api.Models.Domain;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace EcommerceWeb.Api.Models.DTO
 {
@@ -10,6 +11,14 @@ namespace EcommerceWeb.Api.Models.DTO
 
         public string ProductName { get; set; }
         public string Description { get; set; }
+
+
+        public int CategoryID { get; set; }
+
+        //public string CategoryName
+        //{
+        //    get { return Category.CategoryName; }
+        //}
 
         public decimal Price { get; set; }
 
@@ -24,9 +33,16 @@ namespace EcommerceWeb.Api.Models.DTO
         public ICollection<ProductImagesDTO> ProductImages { get; set; }
 
 
-        public ICollection<ProductSizeDTO> ProductSizes { get; set; } 
+        public ICollection<ProductSizeDTO> ProductSizes { get; set; }
 
-        //public CategoryDTO Category { get; set; }
+
+       
+
+
+
+
+        [JsonIgnore]
+        public CategoryDTO Category { get; set; }
 
 
         //public ICollection<OrderItemsDTO> OrderItems { get; set; } = new List<OrderItemsDTO>();

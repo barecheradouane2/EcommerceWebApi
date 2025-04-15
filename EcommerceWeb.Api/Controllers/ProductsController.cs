@@ -31,8 +31,8 @@ namespace EcommerceWeb.Api.Controllers
         }
 
         [HttpGet]
-
-        public async  Task<IActionResult> GetAllAsync([FromQuery] string ? filterOn, [FromQuery] string? filterQuery, [FromQuery] string? sortBy, [FromQuery] bool? isAscending, [FromQuery] int pageNumber=1, [FromQuery] int pagesize=1000)
+        public async  Task<IActionResult> GetAllAsync([FromQuery] string ? filterOn, [FromQuery]
+ string? filterQuery, [FromQuery] string? sortBy, [FromQuery] bool? isAscending, [FromQuery] int pageNumber=1, [FromQuery] int pagesize=1000)
         {
            
             var products = await productRepository.GetAllAsync(filterOn, filterQuery,  sortBy, isAscending, pageNumber, pagesize);
@@ -106,14 +106,12 @@ namespace EcommerceWeb.Api.Controllers
                 Price = AddProductRequestDTO.Price,
                 Discount = AddProductRequestDTO.Discount,
 
-           
-
-
-
                 Stock = AddProductRequestDTO.Stock,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 CategoryID = AddProductRequestDTO.CategoryID,
+
+              
 
                 ProductImages = AddProductRequestDTO.ImageFile?.Select((item, index) => new ProductImages
                 {
@@ -175,6 +173,10 @@ namespace EcommerceWeb.Api.Controllers
             product.Stock = updateProductRequestDTO.Stock;
             product.CreatedAt = DateTime.Now;
             product.CategoryID = updateProductRequestDTO.CategoryID;
+
+            product.UpdatedAt = DateTime.Now;
+
+          
 
 
 
