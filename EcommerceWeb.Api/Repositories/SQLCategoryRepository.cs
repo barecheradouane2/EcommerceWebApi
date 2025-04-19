@@ -33,7 +33,7 @@ namespace EcommerceWeb.Api.Repositories
 
         public async Task<Category?> GetByIdAsync(int id)
         {
-            return await dbContext.Category.FirstOrDefaultAsync(c => c.CategoryID == id);
+            return await dbContext.Category.Include(p=>p.ProductCatalog).ThenInclude(s=>s.ProductImages).FirstOrDefaultAsync(c => c.CategoryID == id);
 
 
 

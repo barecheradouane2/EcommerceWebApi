@@ -8,6 +8,12 @@ namespace EcommerceWeb.Api.Models.Domain
         public int WilayaID { get; set; }
 
         public string WilayaName { get; set; }
+
+
+        public ShippingInfo ShippingInfo { get; set; }
+
+
+
     
     }
 }

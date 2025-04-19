@@ -87,10 +87,20 @@ namespace EcommerceWeb.Api.Controllers
             return Ok(communesDTO);
 
 
+        }
 
+        [HttpGet]
+        [Route("WilayaList")]
+        public async Task<IActionResult> GetWilayaList()
+        {
+            var WilayaList = await ShippingInfoRepository.GetWilayaList();
+            if (WilayaList == null)
+            {
+                return NotFound();
+            }
+            var WilayaListDTO = mapper.Map<List<WilayaDTO>>(WilayaList);
 
-
-
+            return Ok(WilayaListDTO);
         }
 
 

@@ -45,8 +45,10 @@ namespace EcommerceWeb.Api.Mappings
 
             CreateMap<Models.Domain.ShippingInfo, Models.DTO.AddShippingRequestDTO>().ReverseMap();
 
+            CreateMap<Models.Domain.Wilaya,Models.DTO.WilayaDTO>().ReverseMap();
 
-          
+
+
 
             CreateMap<Models.Domain.Commune, Models.DTO.CommuneDTO>().ReverseMap();
 

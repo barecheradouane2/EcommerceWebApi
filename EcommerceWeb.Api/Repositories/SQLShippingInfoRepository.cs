@@ -130,6 +130,14 @@ namespace EcommerceWeb.Api.Repositories
         }
 
 
+        public async Task<List<Wilaya>> GetWilayaList()
+        {
+            var wilayas = await dbContext.Wilaya.ToListAsync();
+
+            return wilayas;
+        }
+
+
 
 
 

@@ -18,6 +18,8 @@ namespace EcommerceWeb.Api.Repositories
 
         Task <List<Commune> > GetCommunOfWilaya (int WilayaID);
 
+        Task <List<Wilaya>> GetWilayaList ();
+
 
     }
 }
