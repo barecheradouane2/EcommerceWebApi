@@ -101,7 +101,7 @@ namespace EcommerceWeb.Api.Repositories
 
                 TotalPrice += item.TotalItemsPrice;
             }
-
+            //something wrong happens here when shippingid is not 0
 
             if (Order.ShippingStatus == 0)
             {
@@ -117,6 +117,7 @@ namespace EcommerceWeb.Api.Repositories
             Order.Wilaya = dbContext.Wilaya.FirstOrDefault(w => w.WilayaID == Order.WilayaID);
             Order.Commune = dbContext.Commune.FirstOrDefault(c => c.CommuneID == Order.CommuneID);
 
+            Order.ShippingInfo = shippininfo;
 
 
             dbContext.Orders.Add(Order);
@@ -188,19 +189,12 @@ namespace EcommerceWeb.Api.Repositories
         }
 
 
-        public async Task<List<Orders>> GetAllAsync([FromQuery] string? filterOn = null, [FromQuery] string? filterQuery = null, [FromQuery] string? sortBy = null, [FromQuery] bool? isAscending = true, [FromQuery] int pageNumber = 1, [FromQuery] int pagesize = 1000)
+        public async Task<PagedResult<Orders>> GetAllAsync([FromQuery] string? filterOn = null, [FromQuery] string? filterQuery = null, [FromQuery] string? sortBy = null, [FromQuery] bool? isAscending = true, [FromQuery] int pageNumber = 1, [FromQuery] int pagesize = 9)
         {
 
             var orders = await dbContext.Orders.Include(w => w.Wilaya).Include(c => c.Commune).Include(o => o.OrderItems)
     .ThenInclude(oi => oi.ProductCatalog).Include(P => P.ShippingInfo) // Include related products
     .ToListAsync();
-
-
-
-
-
-
-
 
 
 
@@ -252,12 +246,20 @@ namespace EcommerceWeb.Api.Repositories
             var SkipResults = (pageNumber - 1) * pagesize;
 
 
+            int totalCount = orders.Count();
+            int totalPages = (int)Math.Ceiling(totalCount / (double)pagesize);
 
+            var pagedItems =  orders.Skip(SkipResults).Take(pagesize).ToList();
 
-
-
-
-           return orders.Skip(SkipResults).Take(pagesize).ToList();
+   
+            return new PagedResult<Orders>
+            {
+                TotalCount = totalCount,
+                TotalPages = totalPages,
+                PageNumber = pageNumber,
+                PageSize = pagesize,
+                Data = pagedItems
+            };
         }
 
 

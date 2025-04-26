@@ -19,11 +19,13 @@ namespace EcommerceWeb.Api.Mappings
             CreateMap<Models.Domain.ProductSize, Models.DTO.ProductSizeDTO>().ReverseMap();
             CreateMap<Models.Domain.ProductColorVariant, Models.DTO.ProductColorVariantDTO>().ReverseMap();
 
+            
 
-    //        CreateMap<ProductCatalog, ProductDTO>()
-    //.ForMember(dest => dest.Stock, opt => opt.MapFrom(src =>
-    //    src.ProductSizes.SelectMany(ps => ps.ProductColorVariant).Sum(pcv => pcv.Quantity)
-    //));
+
+            //        CreateMap<ProductCatalog, ProductDTO>()
+            //.ForMember(dest => dest.Stock, opt => opt.MapFrom(src =>
+            //    src.ProductSizes.SelectMany(ps => ps.ProductColorVariant).Sum(pcv => pcv.Quantity)
+            //));
 
 
 
@@ -35,6 +37,7 @@ namespace EcommerceWeb.Api.Mappings
             CreateMap<Models.Domain.ProductImages, Models.DTO.ProductImagesDTO>().ReverseMap();
 
         
+          
 
 
 
@@ -46,6 +49,8 @@ namespace EcommerceWeb.Api.Mappings
             CreateMap<Models.Domain.ShippingInfo, Models.DTO.AddShippingRequestDTO>().ReverseMap();
 
             CreateMap<Models.Domain.Wilaya,Models.DTO.WilayaDTO>().ReverseMap();
+
+
 
 
 

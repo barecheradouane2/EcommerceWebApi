@@ -9,9 +9,9 @@ namespace EcommerceWeb.Api.Models.DTO
         [Key]
         public int ShippingID { get; set; }
 
-       
 
-        public string WilayaTo { get; set; }
+
+        public int WilayaID { get; set; }
 
         [JsonIgnore]
 

@@ -51,11 +51,11 @@ namespace EcommerceWeb.Api.Controllers
             var orders = await ordersRepository.GetAllAsync(filterOn, filterQuery, sortBy, isAscending, pageNumber, pageSize);
 
             // Map orders to DTOs
-            var ordersDTO = orders.Select(order => new OrdersDto
+            var ordersDTO = orders.Data.Select(order => new OrdersDto
             {
                 OrderID = order.OrderID,
                 OrderDate = order.OrderDate,
-              //  TotalPrice = order.TotalPrice,
+            
                 OrderStatus = order.OrderStatus,
                 FullName = order.FullName,
                 TelephoneNumber = order.TelephoneNumber,
@@ -65,22 +65,22 @@ namespace EcommerceWeb.Api.Controllers
                 Wilaya = order.Wilaya,
                 Commune = order.Commune,
 
-                //Wilaya = order.Wilaya,
-                //Commune = order.Commune,
-                //DiscountCodeID = order.DiscountCodeID,
+              
                 ShippingID = order.ShippingID,
                 ShippingStatus = order.ShippingStatus,
-              ShippingInfo =  new ShippingInfoDTO
-              {
-                  ShippingID = order.ShippingInfo.ShippingID,
-               
-                  WilayaTo = order.ShippingInfo.WilayaTo,
-                  
-                  HomeDeliveryPrice = order.ShippingInfo.HomeDeliveryPrice,
-                  OfficeDeliveryPrice = order.ShippingInfo.OfficeDeliveryPrice
+                ShippingInfo = new ShippingInfoDTO
+                {
+                    ShippingID = order.ShippingInfo.ShippingID,
+                    WilayaID = order.ShippingInfo.WilayaID,
+                    ShipingStatus = order.ShippingInfo.ShipingStatus,
+
+                    
+
+                    HomeDeliveryPrice = order.ShippingInfo.HomeDeliveryPrice,
+                    OfficeDeliveryPrice = order.ShippingInfo.OfficeDeliveryPrice
 
 
-              },
+                },
                 OrderItems = order.OrderItems.Select(item => new OrderItemsDTO
                 {
                     OrderItemsID = item.OrderItemsID,
@@ -95,7 +95,21 @@ namespace EcommerceWeb.Api.Controllers
                 }).ToList()
             }).ToList();
 
-            return Ok(ordersDTO);
+
+            var pagedResultDTO = new PagedResult<OrdersDto>
+            {
+                TotalCount = orders.TotalCount,
+                TotalPages = orders.TotalPages,
+                PageNumber = orders.PageNumber,
+                PageSize = orders.PageSize,
+                Data = ordersDTO
+            };
+
+
+
+
+
+            return Ok(pagedResultDTO);
         }
 
 
@@ -109,11 +123,13 @@ namespace EcommerceWeb.Api.Controllers
                 return NotFound();
             }
 
+            //var ordersDto = mapper.Map<OrdersDto>(order);
+
             var ordersDto = new OrdersDto
             {
                 OrderID = order.OrderID,
                 OrderDate = order.OrderDate,
-                  
+
                 OrderStatus = order.OrderStatus,
                 FullName = order.FullName,
                 TelephoneNumber = order.TelephoneNumber,
@@ -122,17 +138,16 @@ namespace EcommerceWeb.Api.Controllers
                 CommuneID = order.CommuneID,
                 Wilaya = order.Wilaya,
                 Commune = order.Commune,
-                //Wilaya = order.Wilaya,
-                //Commune = order.Commune,
-                //DiscountCodeID = order.DiscountCodeID,
+
                 ShippingID = order.ShippingID,
                 ShippingStatus = order.ShippingStatus,
 
                 ShippingInfo = new ShippingInfoDTO
                 {
                     ShippingID = order.ShippingInfo.ShippingID,
-                    //WilayaFrom = order.ShippingInfo.WilayaFrom,
-                    WilayaTo = order.ShippingInfo.WilayaTo,
+                    WilayaID = order.ShippingInfo.WilayaID,
+                    ShipingStatus = order.ShippingInfo.ShipingStatus,
+
 
                     HomeDeliveryPrice = order.ShippingInfo.HomeDeliveryPrice,
                     OfficeDeliveryPrice = order.ShippingInfo.OfficeDeliveryPrice
@@ -183,7 +198,7 @@ namespace EcommerceWeb.Api.Controllers
 
                     //DiscountCodeID = addOrderRequestDTO.DiscountCodeID,
                     ShippingID = addOrderRequestDTO.ShippingID,
-                    //ShippingStatus = addOrderRequestDTO.ShippingStatus,
+                    ShippingStatus = addOrderRequestDTO.ShippingStatus,
 
 
 
@@ -205,12 +220,14 @@ namespace EcommerceWeb.Api.Controllers
 
                 var newOrder = await ordersRepository.CreateAsync(OrderDomainModel);
 
+
+
                 var OrdersDto = new OrdersDto
                 {
 
                     OrderID = newOrder.OrderID,
                     OrderDate = newOrder.OrderDate,
-                    //TotalPrice = newOrder.TotalPrice,
+                    
                     OrderStatus = newOrder.OrderStatus,
                     FullName = newOrder.FullName,
                     TelephoneNumber = newOrder.TelephoneNumber,
@@ -220,27 +237,20 @@ namespace EcommerceWeb.Api.Controllers
 
                     Wilaya = newOrder.Wilaya,
                     Commune = newOrder.Commune,
-
-                    
-
-                    //DiscountCodeID = newOrder.DiscountCodeID,
                     ShippingID = newOrder.ShippingID,
                     ShippingStatus = newOrder.ShippingStatus,
+
                     ShippingInfo = new ShippingInfoDTO
                     {
                         ShippingID = newOrder.ShippingInfo.ShippingID,
-
+                        WilayaID = newOrder.ShippingInfo.WilayaID,
                         ShipingStatus = newOrder.ShippingInfo.ShipingStatus,
-
-
-                        
-                        WilayaTo = newOrder.ShippingInfo.WilayaTo,
 
                         HomeDeliveryPrice = newOrder.ShippingInfo.HomeDeliveryPrice,
                         OfficeDeliveryPrice = newOrder.ShippingInfo.OfficeDeliveryPrice
 
-
                     },
+
                     OrderItems = newOrder.OrderItems.Select(x => new OrderItemsDTO
                     {
                         OrderItemsID = x.OrderItemsID,
@@ -253,8 +263,31 @@ namespace EcommerceWeb.Api.Controllers
                         Quantity = x.Quantity,
                         Price = x.Price,
                         TotalItemsPrice = x.TotalItemsPrice,
-                        ProductName = x.ProductCatalog?.ProductName 
+                        ProductName = x.ProductCatalog?.ProductName
                     }).ToList()
+
+
+
+                    //DiscountCodeID = newOrder.DiscountCodeID,
+
+                    //ShippingInfo = new ShippingInfoDTO
+                    //{
+                    //    ShippingID = newOrder.ShippingInfo.ShippingID,
+
+                    //    ShipingStatus = newOrder.ShippingInfo.ShipingStatus,
+
+                    //    WilayaID =newOrder.WilayaID,
+
+
+
+                    //    //WilayaTo = newOrder.ShippingInfo.WilayaTo,
+
+                    //    HomeDeliveryPrice = newOrder.ShippingInfo.HomeDeliveryPrice,
+                    //    OfficeDeliveryPrice = newOrder.ShippingInfo.OfficeDeliveryPrice
+
+
+                    //},
+
 
 
 
@@ -322,17 +355,15 @@ namespace EcommerceWeb.Api.Controllers
                 OrderAddress = order.OrderAddress,
                 WilayaID = order.WilayaID,
                 CommuneID = order.CommuneID,
-                //Wilaya = order.Wilaya,
-                //Commune = order.Commune,
-                //DiscountCodeID = order.DiscountCodeID,
+                
                 ShippingID = order.ShippingID,
                 ShippingStatus = order.ShippingStatus,
 
                 ShippingInfo = new ShippingInfoDTO
                 {
                     ShippingID = order.ShippingInfo.ShippingID,
-                    //WilayaFrom = order.ShippingInfo.WilayaFrom,
-                    WilayaTo = order.ShippingInfo.WilayaTo,
+                    WilayaID = order.ShippingInfo.WilayaID,
+                    ShipingStatus = order.ShippingInfo.ShipingStatus,
 
                     HomeDeliveryPrice = order.ShippingInfo.HomeDeliveryPrice,
                     OfficeDeliveryPrice = order.ShippingInfo.OfficeDeliveryPrice
@@ -454,21 +485,21 @@ namespace EcommerceWeb.Api.Controllers
             {
                 OrderID = updatedOrder.OrderID,
                 OrderDate = updatedOrder.OrderDate,
-                //TotalPrice = updatedOrder.TotalPrice,
+               
                 OrderStatus = updatedOrder.OrderStatus,
                 FullName = updatedOrder.FullName,
                 TelephoneNumber = updatedOrder.TelephoneNumber,
                 OrderAddress = updatedOrder.OrderAddress,
-                //Wilaya = updatedOrder.Wilaya,
-                //Commune = updatedOrder.Commune,
-                //DiscountCodeID = updatedOrder.DiscountCodeID,
+               
                 ShippingID = updatedOrder.ShippingID,
                 ShippingStatus = updatedOrder.ShippingStatus,
                 ShippingInfo = new ShippingInfoDTO
                 {
-                    ShippingID = order.ShippingInfo.ShippingID,
-                    //WilayaFrom = order.ShippingInfo.WilayaFrom,
-                    WilayaTo = order.ShippingInfo.WilayaTo,
+                   ShippingID =order.ShippingInfo.ShippingID,
+
+                   WilayaID=order.ShippingInfo.WilayaID,
+
+                    ShipingStatus = order.ShippingInfo.ShipingStatus,
 
                     HomeDeliveryPrice = order.ShippingInfo.HomeDeliveryPrice,
                     OfficeDeliveryPrice = order.ShippingInfo.OfficeDeliveryPrice

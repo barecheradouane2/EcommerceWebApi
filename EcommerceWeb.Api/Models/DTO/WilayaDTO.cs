@@ -7,7 +7,10 @@
 
         public string WilayaName { get; set; }
 
+        public int ShippingID { get; set; }
 
         public ShippingInfoDTO ShippingInfo { get; set; }
+
+
     }
 }

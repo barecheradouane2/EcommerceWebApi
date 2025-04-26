@@ -1,5 +1,6 @@
 ﻿using EcommerceWeb.Api.Data;
 using EcommerceWeb.Api.Models.Domain;
+using EcommerceWeb.Api.Models.DTO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,11 +22,18 @@ namespace EcommerceWeb.Api.Repositories
             this.webHostEnvironment = webHostEnvironment;
             this.httpContextAccessor = httpContextAccessor;
         }
-        public async Task<List<ProductCatalog>> GetAllAsync([FromQuery] string? filterOn=null, [FromQuery] string? filterQuery = null, [FromQuery] string? sortBy=null, [FromQuery] bool? isAscending=true,  int pageNumber = 1,  int pagesize = 9)
+        public async Task<PagedResult<ProductCatalog>> GetAllAsync([FromQuery] string? filterOn=null, [FromQuery] string? filterQuery = null, [FromQuery] string? sortBy=null, [FromQuery] bool? isAscending=true,  int pageNumber = 1,  int pagesize = 9)
         {
 
 
             var products = dbContext.ProductCatalog.Include(pc => pc.ProductImages).Include(pc => pc.ProductSizes).ThenInclude(ps => ps.ProductColorVariant).AsQueryable();
+
+          
+
+
+            
+
+
 
             if (string.IsNullOrEmpty(filterOn)==false &&  string.IsNullOrEmpty(filterQuery)==false)
             {
@@ -88,16 +96,25 @@ namespace EcommerceWeb.Api.Repositories
                 }
             }
 
-            //pageNumbers
+
+            int totalCount = await products.CountAsync();
+            int totalPages = (int)Math.Ceiling(totalCount / (double)pagesize);
+
 
             var SkipResults= (pageNumber - 1) * pagesize;
-
-      //      products = products.Skip(SkipResults).Take(pagesize);
-
+            var pagedItems = await products.Skip(SkipResults).Take(pagesize).ToListAsync();
 
 
 
-            return await products.Skip(SkipResults).Take(pagesize).ToListAsync();
+
+            return new PagedResult<ProductCatalog>
+            {
+                TotalCount = totalCount,
+                TotalPages = totalPages,
+                PageNumber = pageNumber,
+                PageSize = pagesize,
+                Data = pagedItems
+            }; ;
         }
 
 

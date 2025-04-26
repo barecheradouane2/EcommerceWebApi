@@ -56,7 +56,7 @@ namespace EcommerceWeb.Api.Repositories
                 }
                  if (filterOn == "WilayaTo")
                 {
-                    shipping = shipping.Where(x => x.WilayaTo.Contains(filterQuery));
+                    //shipping = shipping.Where(x => x.WilayaTo.Contains(filterQuery));
                 }
 
             }
@@ -132,7 +132,9 @@ namespace EcommerceWeb.Api.Repositories
 
         public async Task<List<Wilaya>> GetWilayaList()
         {
-            var wilayas = await dbContext.Wilaya.ToListAsync();
+         
+            var wilayas = await dbContext.Wilaya.Include(x => x.ShippingInfo).ToListAsync();
+
 
             return wilayas;
         }

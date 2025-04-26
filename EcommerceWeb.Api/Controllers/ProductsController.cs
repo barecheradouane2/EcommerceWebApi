@@ -5,6 +5,7 @@ using EcommerceWeb.Api.Models.DTO;
 using EcommerceWeb.Api.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
@@ -37,8 +38,21 @@ namespace EcommerceWeb.Api.Controllers
            
             var products = await productRepository.GetAllAsync(filterOn, filterQuery,  sortBy, isAscending, pageNumber, pagesize);
 
-            var productDTOList = mapper.Map<List<ProductDTO>>(products);
-            return Ok(productDTOList);
+           
+
+            var productDTOList = mapper.Map<List<ProductDTO>>(products.Data);
+
+            var pagedResultDTO = new PagedResult<ProductDTO>
+            {
+                TotalCount = products.TotalCount,
+                TotalPages = products.TotalPages,
+                PageNumber = products.PageNumber,
+                PageSize = products.PageSize,
+                Data = productDTOList
+            };
+
+
+            return Ok(pagedResultDTO);
         }
 
         [HttpGet]

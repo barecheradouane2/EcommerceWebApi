@@ -104,6 +104,19 @@ namespace EcommerceWeb.Api.Models.DTO
             }
         }
 
+        public string deliveryType
+        {
+            get
+            {
+                return ShippingStatus switch
+                {
+                    0 => "Home Delivery",
+                    1 => "Office Delivery",
+                    _ => "Unknown" // Default value for unexpected statuses.
+                };
+            }
+        }
+
         [JsonIgnore]
         public int ShippingStatus { get; set; }
 

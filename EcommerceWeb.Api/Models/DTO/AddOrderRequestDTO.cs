@@ -31,7 +31,7 @@ namespace EcommerceWeb.Api.Models.DTO
 
         public int ShippingID { get; set; }
 
-        //public int ShippingStatus { get; set; } = 0;
+        public int ShippingStatus { get; set; } = 0;
 
 
 

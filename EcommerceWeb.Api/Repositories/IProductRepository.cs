@@ -1,4 +1,5 @@
 ﻿using EcommerceWeb.Api.Models.Domain;
+using EcommerceWeb.Api.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcommerceWeb.Api.Repositories
@@ -6,7 +7,7 @@ namespace EcommerceWeb.Api.Repositories
     public interface IProductRepository 
     {
 
-      Task <List<ProductCatalog>> GetAllAsync([FromQuery] string? filterOn=null, [FromQuery] string? filterQuery=null, [FromQuery] string? sortBy = null, [FromQuery] bool? isAscending=true, [FromQuery] int pageNumber = 1, [FromQuery] int pagesize = 1000);
+      Task <PagedResult<ProductCatalog>> GetAllAsync([FromQuery] string? filterOn=null, [FromQuery] string? filterQuery=null, [FromQuery] string? sortBy = null, [FromQuery] bool? isAscending=true, [FromQuery] int pageNumber = 1, [FromQuery] int pagesize = 1000);
 
         Task <ProductCatalog?> GetByIdAsync(int id);
 

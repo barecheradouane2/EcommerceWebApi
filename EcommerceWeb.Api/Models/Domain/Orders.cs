@@ -31,7 +31,7 @@ namespace EcommerceWeb.Api.Models.Domain
 
         //public int DiscountCodeID { get; set; }
 
-      
+
 
         public int ShippingStatus { get; set; } = 0;
 

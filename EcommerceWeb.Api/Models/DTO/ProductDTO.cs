@@ -41,6 +41,11 @@ namespace EcommerceWeb.Api.Models.DTO
 
 
 
+       
+
+
+
+
         [JsonIgnore]
         public CategoryDTO Category { get; set; }
 
